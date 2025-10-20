@@ -3,7 +3,7 @@
 # https://www.usememos.com/docs
 # https://memos.apidocumentation.com/reference
 
-# app版本 只支持到0.25.0版本 要指定版本
+# app版本 只支持到0.21.0版本 要指定版本
 #https://github.com/mudkipme/MoeMemosAndroid/releases/latest
 # 获取脚本的绝对路径
 script_path=$(readlink -f "$0")
@@ -19,4 +19,4 @@ sudo docker run -d \
 -p $port:5230 \
 --restart always \
 -v $script_dir/.memos2/:/var/opt/memos \
-neosmemo/memos:0.25.0
+neosmemo/memos:0.21.0
