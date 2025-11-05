@@ -1,8 +1,9 @@
 memos
 memos
 main
-key memosBack/20251020-0201.db
-{'hash': 'lgGyavC8SNjqjyu3ewLtXWiJDhF5', 'key': 'memosBack/20251020-0201.db'}
-_ResponseInfo__response:<Response [200]>, exception:None, status_code:200, text_body:{"hash":"lgGyavC8SNjqjyu3ewLtXWiJDhF5","key":"memosBack/20251020-0201.db"}, req_id:R8UAAADDdeNd9m8Y, x_log:X-Log
-__doNetCacheDelNet None
-_ResponseInfo__response:<Response [631]>, exception:None, status_code:631, text_body:{"error":"no such bucket"}, req_id:k-0AAADW77Rj9m8Y, x_log:-, error:{"error":"no such bucket"}
+key memosBack/20251105-0201.db
+None
+_ResponseInfo__response:None, exception:('Connection aborted.', timeout('timed out',)), status_code:-1, text_body:None, req_id:None, x_log:None, error:('Connection aborted.', timeout('timed out',))
+'NoneType' object is not subscriptable
+__doNetCacheDelNet memosBack/20251104-0201.db
+_ResponseInfo__response:<Response [200]>, exception:None, status_code:200, text_body:, req_id:lW8AAAArCxC133QY, x_log:-
