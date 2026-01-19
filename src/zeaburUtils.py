@@ -8,7 +8,7 @@ apiToken="sk-mjs5s7ldwoqpe5kgsimp5onipx5ko"
 
 # 读取工作流级别的环境变量
 projectId = os.environ.get('ZEABURE_PROJECTID', '696db7432952d01a4bcfd031')
-serviceId = os.environ.get('ZEABURE_SERVICEID', '696db7542952d01a4bcfd032')
+serviceId = os.environ.get('ZEABURE_SERVICEID', '696dcaee2952d01a4bcfda57')
 envID = os.environ.get('ZEABURE_ENVID', '696db743a7aaff0c1152f35a')
 print(f"环境变量 PROJECTID: {projectId}  SERVICEID: {serviceId} envID: {envID}")
 
@@ -29,15 +29,14 @@ def downFile():
     return localDbFile
 
 
-def uploadFile():
+def uploadFile(localDbFile):
     try:
         # 构造完整的API URL
         url = f"https://api.zeabur.com/projects/{projectId}/services/{serviceId}/files"
         params = {
-            "path": "/var/opt/memos/memos_prod.db",
+            "path": f"/var/opt/memos/{localDbFile}",
             "environment": envID
         }
-        localDbFile="memos_20250617.db"
         # 上传文件
         with open(localDbFile, "rb") as file:
             req = requests.post(
@@ -64,4 +63,7 @@ def uploadFile():
 
 
 if __name__ == "__main__":
-    uploadFile()
+    uploadFile("memos_prod.db")
+    # uploadFile("memos_prod.db-shm")
+    # uploadFile("memos_prod.db-wal")
+    # downFile()
