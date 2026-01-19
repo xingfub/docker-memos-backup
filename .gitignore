@@ -1,2 +1,4 @@
 nginx/log/*
 mysqlBackup/*
+src/memos_prod.db
+src/__pycache__
