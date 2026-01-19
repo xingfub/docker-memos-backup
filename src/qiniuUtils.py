@@ -33,13 +33,15 @@ def __getToken():
 
 
 
-def uploadLocal(localfile,remoteFileName):
+def uploadFile(localfile,remoteFileName):
     """
     上传文件
     :param localfile:
     :return:
     """
     # 要上传文件的本地路径
+    if True:
+        return None
     try:
         key_ = f"memosZeaburBack/{remoteFileName}" 
         print("key", key_)
@@ -65,13 +67,13 @@ def __getUrl(fileName):
     return private_url
 
 
-def doNetCacheDelNet(key_):
+def delFile(key_):
     """
     从7牛中删除数据
     :param key_:
     :return:
     """
-    print("__doNetCacheDelNet", key_)
+    print("delFile", key_)
     q = Auth(access_key, secret_key)
     bucket = BucketManager(q)
     ret, info = bucket.delete(bucket_name, key_)

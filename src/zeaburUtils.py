@@ -2,31 +2,45 @@
 
 import requests
 import os
-
+import zipfile
 
 apiToken="sk-mjs5s7ldwoqpe5kgsimp5onipx5ko"
 
 # 读取工作流级别的环境变量
 projectId = os.environ.get('ZEABURE_PROJECTID', '696db7432952d01a4bcfd031')
-serviceId = os.environ.get('ZEABURE_SERVICEID', '696dcaee2952d01a4bcfda57')
+serviceId = os.environ.get('ZEABURE_SERVICEID', '696de24c2952d01a4bcfe913')
 envID = os.environ.get('ZEABURE_ENVID', '696db743a7aaff0c1152f35a')
 print(f"环境变量 PROJECTID: {projectId}  SERVICEID: {serviceId} envID: {envID}")
 
-def downFile():
-    localDbFile="memos_prod.db"
+def downFile_(localDbFile):
     if os.path.exists(localDbFile):
         os.remove(localDbFile)
-    path="/var/opt/memos/memos_prod.db"
+    path=f"/var/opt/memos/{localDbFile}"
     url=f"https://api.zeabur.com/projects/{projectId}/services/{serviceId}/files?path={path}&environment={envID}"
     req = requests.get(url,
         headers={"Authorization": f"Bearer {apiToken}"}
     )
     print(req.status_code)
-    print(len(req.content))
     # 保存到本地
-    with open(localDbFile, "wb") as f:
+    local_file_=f"../zeabur/{localDbFile}"
+    os.makedirs(os.path.dirname(local_file_), exist_ok=True)
+    with open(local_file_, "wb") as f:
         f.write(req.content)
-    return localDbFile
+    return local_file_
+
+
+def downFile():
+    db_=downFile_("memos_prod.db")
+    db_shm_=downFile_("memos_prod.db-shm")
+    db_al_=downFile_("memos_prod.db-wal")
+     # 压缩为zip文件
+    zip_file_=f"../zeabur/db.zip"
+    with zipfile.ZipFile(zip_file_, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        zipf.write(db_, "memos_prod.db")
+        zipf.write(db_shm_, "memos_prod.db-shm")
+        zipf.write(db_al_, "memos_prod.db-wal")
+    return zip_file_
+
 
 
 def uploadFile(localDbFile):
@@ -63,7 +77,8 @@ def uploadFile(localDbFile):
 
 
 if __name__ == "__main__":
-    uploadFile("memos_prod.db")
+    # uploadFile("memos_prod.db")
     # uploadFile("memos_prod.db-shm")
     # uploadFile("memos_prod.db-wal")
-    # downFile()
+    zip_file_=downFile()
+    print(zip_file_)
