@@ -23,6 +23,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Python script
+        env: # Or as an environment variable
+          SERVICEID: ${{ secrets.SERVICEID  }}
         run: |
           cd src
           python main.py
