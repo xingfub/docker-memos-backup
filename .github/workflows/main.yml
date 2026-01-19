@@ -24,7 +24,10 @@ jobs:
 
       - name: Run Python script
         env: # Or as an environment variable
-          SERVICEID: ${{ secrets.SERVICEID  }}
+          ZEABURE_PROJECTID: ${{ vars.ZEABURE_PROJECTID  }}
+          ZEABURE_SERVICEID: ${{ vars.ZEABURE_SERVICEID  }}
+          ZEABURE_ENVID: ${{ vars.ZEABURE_ENVID  }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID  }}
         run: |
           cd src
           python main.py
