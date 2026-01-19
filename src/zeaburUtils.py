@@ -17,9 +17,8 @@ def downFile():
     if os.path.exists(localDbFile):
         os.remove(localDbFile)
     path="/var/opt/memos/memos_prod.db"
-    # path="/var/opt/memos/aa.txt"
-    req = requests.get(
-        f"https://api.zeabur.com/projects/{projectId}/services/{serviceId}/files?path={path}&environment={envID}",
+    url=f"https://api.zeabur.com/projects/{projectId}/services/{serviceId}/files?path={path}&environment={envID}"
+    req = requests.get(url,
         headers={"Authorization": f"Bearer {apiToken}"}
     )
     print(req.status_code)
@@ -30,6 +29,39 @@ def downFile():
     return localDbFile
 
 
+def uploadFile():
+    try:
+        # 构造完整的API URL
+        url = f"https://api.zeabur.com/projects/{projectId}/services/{serviceId}/files"
+        params = {
+            "path": "/var/opt/memos/memos_prod.db",
+            "environment": envID
+        }
+        localDbFile="memos_20250617.db"
+        # 上传文件
+        with open(localDbFile, "rb") as file:
+            req = requests.post(
+                url,
+                data=params,
+                headers={"Authorization": f"Bearer {apiToken}"},
+                files={"file": file}
+            )
+        
+        print(f"上传文件状态码: {req.status_code}")
+        print(f"上传文件响应: {req.text}")
+        
+        # 检查上传是否成功
+        if req.status_code in [200, 201, 204]:
+            print(f"文件上传成功: {localDbFile} ")
+            return True
+        else:
+            print(f"文件上传失败: HTTP {req.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"文件上传异常: {str(e)}")
+        return False
+
 
 if __name__ == "__main__":
-    downFile()
+    uploadFile()
