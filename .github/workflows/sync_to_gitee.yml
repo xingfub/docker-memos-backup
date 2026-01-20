@@ -30,7 +30,7 @@ jobs:
           
           # 2. 配置 Gitee HTTPS 地址（用户名:令牌@仓库地址）
           GITEE_REPO_URL="https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/${GITEE_USER}/${GITEE_REPO}.git"
-          
+          echo $GITEE_REPO_URL
           # 3. 推送所有分支和标签到 Gitee
           cd github-mirror.git
           git push --mirror $GITEE_REPO_URL
