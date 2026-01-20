@@ -18,7 +18,7 @@ jobs:
       - name: Sync to Gitee (HTTPS 版，无 SSH)
         env:
           # Gitee 私人令牌（加密存储）
-          GITEE_TOKEN: ${{ vars.GITEE_HTTPS_TOKEN }}
+          GITEE_TOKEN: ${{ vars.GITEE_TOKEN }}
           # Gitee 用户名和仓库名
           GITEE_USER: chxin
           GITEE_REPO: docker-memos
