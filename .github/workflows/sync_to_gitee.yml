@@ -11,17 +11,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 拉取所有历史提交
+
       - name: Fix Git Safe Directory
         run: git config --global --add safe.directory /github/workspace
+
+      # 新增步骤：配置 SSH 密钥（核心修复）
+      - name: Setup SSH for Gitee
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
+        run: |
+          # 创建 SSH 目录并设置权限
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          # 将私钥写入文件并设置正确权限（关键：600）
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # 配置 Gitee 为可信主机，避免首次连接的交互提示
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}  # 使用SSH私钥认证
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
         with:
-          # 使用GitHub Actions内置token进行认证
           source-repo: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/xingfub/zeabur-memos-backup.git"
-          # 使用SSH URL进行目标仓库连接
           destination-repo: "git@gitee.com:chxin/docker-memos.git"
+
       - name: Trigger Gitee Pipeline
         run: |
           # 调用 Gitee API 触发 Pipeline
