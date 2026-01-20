@@ -1,8 +1,8 @@
 name: Sync to Gitee
 on:
   push:
-    branches: [ main, master ]  # 监听的 GitHub 分支
-  workflow_dispatch:  # 允许手动触发
+    branches: [ main, master ]
+  workflow_dispatch:
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -10,43 +10,40 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 拉取所有历史提交
+          fetch-depth: 0
 
       - name: Fix Git Safe Directory
         run: git config --global --add safe.directory /github/workspace
 
-      # 新增步骤：配置 SSH 密钥（核心修复）
-      - name: Setup SSH for Gitee
+      - name: Setup SSH for Gitee (适配 root + runner 用户)
         env:
           SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
         run: |
-          # 彻底重置 SSH 环境
+          # 1. 配置 runner 用户的 SSH（手动测试用）
           rm -rf ~/.ssh
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          
-          # 写入 RSA 私钥，强制清理所有异常字符
           echo "$SSH_PRIVATE_KEY" | sed -e 's/\r//g' -e '/^$/d' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          
-          # 强制指定密钥类型为 RSA
-          echo -e "Host gitee.com\n  IdentityFile ~/.ssh/id_rsa\n  IdentitiesOnly yes" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-          
-          # 添加 Gitee 主机指纹（兼容 RSA/ED25519）
           ssh-keyscan -t rsa,ed25519 gitee.com > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          
-          # 调试：验证密钥和连接
-          echo "=== 私钥格式验证 ==="
-          cat ~/.ssh/id_rsa
-          echo "=== SSH 配置 ==="
-          cat ~/.ssh/config
-          echo "=== 尝试解析密钥 ==="
-          ssh-keygen -l -f ~/.ssh/id_rsa || true
-          echo "=== SSH 连接测试 ==="
-          ssh -v -i ~/.ssh/id_rsa -o IdentitiesOnly=yes git@gitee.com || true
-          
+
+          # 2. 配置 root 用户的 SSH（git-mirror-action 用）
+          rm -rf /root/.ssh
+          mkdir -p /root/.ssh
+          chmod 700 /root/.ssh
+          cp ~/.ssh/id_rsa /root/.ssh/id_rsa
+          chmod 600 /root/.ssh/id_rsa
+          cp ~/.ssh/known_hosts /root/.ssh/known_hosts
+          chmod 644 /root/.ssh/known_hosts
+
+          # 3. 全局配置 Git 使用指定 SSH 密钥
+          git config --global core.sshCommand "ssh -i /root/.ssh/id_rsa -o IdentitiesOnly=yes"
+
+          # 测试 root 用户的 SSH 连接
+          echo "=== Root 用户 SSH 测试 ==="
+          sudo ssh -v -i /root/.ssh/id_rsa git@gitee.com || true
+
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
@@ -57,7 +54,6 @@ jobs:
 
       - name: Trigger Gitee Pipeline
         run: |
-          # 调用 Gitee API 触发 Pipeline
           curl -X POST \
             -H "Authorization: token ${{ vars.GITEE_TOKEN }}" \
             -H "Content-Type: application/json" \
