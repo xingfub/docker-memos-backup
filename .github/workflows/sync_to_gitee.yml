@@ -12,14 +12,16 @@ jobs:
         with:
           fetch-depth: 0  # 拉取所有历史提交
       - name: Fix Git Safe Directory
-        run: git config --global --add safe.directory ./github/workflows
+        run: git config --global --add safe.directory /github/workspace
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_TOKEN }}   
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}  # 使用SSH私钥认证
         with:
-          source-repo: "https://github.com/xingfub/zeabur-memos-backup.git"
-          destination-repo: "https://gitee.com/chxin/docker-memos.git"
+          # 使用GitHub Actions内置token进行认证
+          source-repo: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/xingfub/zeabur-memos-backup.git"
+          # 使用SSH URL进行目标仓库连接
+          destination-repo: "git@gitee.com:chxin/docker-memos.git"
       - name: Trigger Gitee Pipeline
         run: |
           # 调用 Gitee API 触发 Pipeline
