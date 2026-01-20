@@ -31,11 +31,12 @@ jobs:
           # 配置 Gitee 为可信主机，避免首次连接的交互提示
           ssh-keyscan gitee.com >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-
+          # 测试 SSH 连接（关键！添加这行，能在日志中看到具体错误）
+          ssh -vT git@gitee.com
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
         with:
           source-repo: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/xingfub/zeabur-memos-backup.git"
           destination-repo: "git@gitee.com:chxin/docker-memos.git"
@@ -44,7 +45,7 @@ jobs:
         run: |
           # 调用 Gitee API 触发 Pipeline
           curl -X POST \
-            -H "Authorization: token ${{ secrets.GITEE_TOKEN }}" \
+            -H "Authorization: token ${{ vars.GITEE_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://gitee.com/api/v5/repos/chxin/docker-memos/pipelines" \
             -d '{"ref": "master"}'
