@@ -21,6 +21,7 @@ jobs:
       - name: Trigger Gitee Pipeline
         run: |
           # 调用 Gitee API 触发 Pipeline
+          git config --global --add safe.directory /github/workspace
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITEE_TOKEN }}" \
             -H "Content-Type: application/json" \
