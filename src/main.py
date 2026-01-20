@@ -40,13 +40,15 @@ if __name__ == "__main__":
         uploadFile(localDbFile)
     else:
         print("zeabure downFile fail ,file size is 0")
-    # 1、下载文件
-    print("1.downFileSsh")
-    localDbFile=downFileSsh()
-    if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
-        # 2、上传文件
-        uploadFile(localDbFile)
-    else:
-        print("ssh downFile fail ,file size is 0")
+    sshbackup=False
+    if sshbackup:
+        # 1、下载文件
+        print("1.downFileSsh")
+        localDbFile=downFileSsh()
+        if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
+            # 2、上传文件
+            uploadFile(localDbFile)
+        else:
+            print("ssh downFile fail ,file size is 0")
     
  

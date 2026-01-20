@@ -12,7 +12,7 @@ jobs:
         with:
           fetch-depth: 0  # 拉取所有历史提交
       - name: Fix Git Safe Directory
-        run: git config --global --add safe.directory /github/workspace
+        run: git config --global --add safe.directory ./github/workflows
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
