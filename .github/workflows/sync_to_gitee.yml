@@ -10,57 +10,39 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 拉取所有历史提交
 
       - name: Fix Git Safe Directory
         run: git config --global --add safe.directory /github/workspace
 
-      - name: Setup SSH for Gitee (修复 root 权限 + 加密变量)
+      - name: Sync to Gitee (HTTPS 版，无 SSH)
         env:
-          # 关键修正：敏感信息必须用 vars 而非 vars！
-          SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
-          GITEE_TOKEN: ${{ vars.GITEE_TOKEN }}
+          # Gitee 私人令牌（加密存储）
+          GITEE_TOKEN: ${{ vars.GITEE_HTTPS_TOKEN }}
+          # Gitee 用户名和仓库名
+          GITEE_USER: chxin
+          GITEE_REPO: docker-memos
+          # GitHub 源仓库
+          GITHUB_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/xingfub/zeabur-memos-backup.git
         run: |
-          # 1. 配置 runner 用户的 SSH（手动测试用）
-          rm -rf ~/.ssh
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "$SSH_PRIVATE_KEY" | sed -e 's/\r//g' -e '/^$/d' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa,ed25519 gitee.com > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
-
-          # 2. 配置 root 用户的 SSH（解决权限问题：用 sudo 执行所有 root 操作）
-          sudo rm -rf /root/.ssh || true  # 即使目录不存在也不报错
-          sudo mkdir -p /root/.ssh
-          sudo chmod 700 /root/.ssh
-          sudo cp ~/.ssh/id_rsa /root/.ssh/id_rsa
-          sudo chmod 600 /root/.ssh/id_rsa
-          sudo cp ~/.ssh/known_hosts /root/.ssh/known_hosts
-          sudo chmod 644 /root/.ssh/known_hosts
-
-          # 3. 全局配置 Git 使用指定 SSH 密钥
-          git config --global core.sshCommand "sudo ssh -i /root/.ssh/id_rsa -o IdentitiesOnly=yes -o UserKnownHostsFile=/root/.ssh/known_hosts"
-
-          # 测试 root 用户的 SSH 连接（用 sudo 执行）
-          echo "=== Root 用户 SSH 测试 ==="
-          sudo ssh -v -i /root/.ssh/id_rsa -o UserKnownHostsFile=/root/.ssh/known_hosts git@gitee.com || true
-
-      - name: Sync to Gitee
-        uses: wearerequired/git-mirror-action@master
-        env:
-          # 同样修正：用 vars 而非 vars
-          SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
-        with:
-          source-repo: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/xingfub/zeabur-memos-backup.git"
-          destination-repo: "git@gitee.com:chxin/docker-memos.git"
+          # 1. 克隆 GitHub 源仓库到本地（裸仓库）
+          git clone --bare $GITHUB_REPO github-mirror.git
+          
+          # 2. 配置 Gitee HTTPS 地址（用户名:令牌@仓库地址）
+          GITEE_REPO_URL="https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/${GITEE_USER}/${GITEE_REPO}.git"
+          
+          # 3. 推送所有分支和标签到 Gitee
+          cd github-mirror.git
+          git push --mirror $GITEE_REPO_URL
+          
+          # 清理临时文件
+          cd ..
+          rm -rf github-mirror.git
 
       - name: Trigger Gitee Pipeline
         env:
-          # 修正：用 vars 而非 vars
-          GITEE_TOKEN: ${{ vars.GITEE_TOKEN }}
+          GITEE_TOKEN: ${{ vars.GITEE_TOKEN }}  # 原有的 Gitee Token（用于触发 Pipeline）
         run: |
-          # 调用 Gitee API 触发 Pipeline
           curl -X POST \
             -H "Authorization: token $GITEE_TOKEN" \
             -H "Content-Type: application/json" \
