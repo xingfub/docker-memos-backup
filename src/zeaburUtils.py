@@ -34,7 +34,7 @@ def downFile():
     db_shm_=downFile_("memos_prod.db-shm")
     db_al_=downFile_("memos_prod.db-wal")
      # 压缩为zip文件
-    zip_file_=f"../zeabur/db.zip"
+    zip_file_=f"../zeabur/db_zeabur.zip"
     with zipfile.ZipFile(zip_file_, 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(db_, "memos_prod.db")
         zipf.write(db_shm_, "memos_prod.db-shm")

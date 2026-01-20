@@ -1,25 +1,19 @@
 from remotePathUtils import writeKey
-from zeaburUtils import downFile
+from zeaburUtils import downFile as downFileZeabur
+from sshUtils import downFile as downFileSsh
 from qiniuUtils import uploadFile as uploadFileQiniu,delFile as delFileQiniu
-from alistUtils import uploadFile,delFile
+from alistUtils import uploadFile as uploadFileAlist,delFile as delFileAlist
 from utils import __getSqlFileName as getSqlFileName
 from jianguoUtils import uploadFile as uploadFileJianguo,delFile as delFileJianguo
 import os
 from mailutils import uploadFile as uploadFileMail
 
-if __name__ == "__main__":
-    # 1、下载文件
-    print("1.downFile")
-    localDbFile=downFile()
-    #文件长度大于0
-    if not os.path.exists(localDbFile) and os.path.getsize(localDbFile) <100:
-        print("downFile fail ,file size is 0")
-        exit(1)
-    # 2、上传文件
+def uploadFile(localDbFile):
+      # 2、上传文件
     print("2.uploadFile")
     remoteFileName=getSqlFileName()
     qiniuKey = uploadFileQiniu(localDbFile,remoteFileName)
-    alistKey=uploadFile(localDbFile,remoteFileName)
+    alistKey=uploadFileAlist(localDbFile,remoteFileName)
     jianguoKey=uploadFileJianguo(localDbFile,remoteFileName)
     uploadFileMail(localDbFile)
     print(f"qiniuKey {qiniuKey} alistKey {alistKey} jianguoKey {jianguoKey}")
@@ -32,7 +26,27 @@ if __name__ == "__main__":
     if d1:
         delFileQiniu(d1)
     if d2:
-        delFile(d2)
+        delFileAlist(d2)
     if d3:
         delFileJianguo(d3)
+
+if __name__ == "__main__":
+    # 1、下载文件
+    print("1.downFileZeabur")
+    localDbFile=downFileZeabur()
+    #文件长度大于0
+    if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
+        # 2、上传文件
+        uploadFile(localDbFile)
+    else:
+        print("zeabure downFile fail ,file size is 0")
+    # 1、下载文件
+    print("1.downFileSsh")
+    localDbFile=downFileSsh()
+    if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
+        # 2、上传文件
+        uploadFile(localDbFile)
+    else:
+        print("ssh downFile fail ,file size is 0")
+    
  

@@ -33,7 +33,7 @@ def writeKey_(key, value):
     data_.append(value)
     print(f"writeKey {key} {json.dumps(data_)}")
     neddDel=None
-    if len(data_)>5:
+    if len(data_)>10:
        neddDel= data_.pop(0)
     res=requests.post(writeUrl,
     json={"key": key,"password":password_,"value":json.dumps(data_)})

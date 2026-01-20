@@ -7,7 +7,7 @@ from email.mime.application import MIMEApplication
 from email.header import Header
 
 class EmailSender:
-    def __init__(self, receiver_email="proud2008@qq.com"):
+    def __init__(self, receiver_email="xingfub@qq.com"):
         """
         初始化邮件发送器
         
@@ -21,7 +21,7 @@ class EmailSender:
         self.smtp_server = "smtp.126.com"
         self.smtp_port = 25
         self.sender = "proud2008@126.com"
-        self.password = "MXjXbLz7XejAyiLR"
+        self.password = os.environ.get("MAIL_126_PASSWORD", "MXjXbLz7XejAyiLR")
         self.receiver = receiver_email
     
     def send_email(self, subject="zeaburBackup", body="zeaburBackup", file_path=None):
