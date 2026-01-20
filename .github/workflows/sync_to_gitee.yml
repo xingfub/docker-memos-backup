@@ -1,0 +1,25 @@
+name: Sync to Gitee
+on:
+  push:
+    branches: [ main, master ]  # 监听的 GitHub 分支
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 拉取所有历史提交
+      - name: Sync to Gitee
+        uses: wearerequired/git-mirror-action@master
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_TOKEN }}   
+        with:
+          source-repo: "https://github.com/xingfub/zeabur-memos-backup.git"
+          destination-repo: "https://gitee.com/chxin/docker-memos.git"
+      - name: Trigger Gitee Pipeline
+        uses: gitee-actions/gitee-trigger-action@v1
+        with:
+          gitee-token: ${{ secrets.GITEE_TOKEN }}
+          gitee-repo: chxin/docker-memos
+          branch: master  # 同步到 Gitee 的分支
