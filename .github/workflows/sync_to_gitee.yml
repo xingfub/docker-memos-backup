@@ -26,8 +26,10 @@ jobs:
           
           # 将私钥写入文件并设置正确权限（关键：600）
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "--------------------"
           echo "$SSH_PRIVATE_KEY"
           cat ~/.ssh/id_rsa
+          echo "--------------------"
           chmod 600 ~/.ssh/id_rsa
           
           # 配置 Gitee 为可信主机，避免首次连接的交互提示
