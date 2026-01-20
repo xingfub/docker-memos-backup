@@ -2,6 +2,7 @@ name: Sync to Gitee
 on:
   push:
     branches: [ main, master ]  # 监听的 GitHub 分支
+  workflow_dispatch:  # 允许手动触发
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -18,8 +19,10 @@ jobs:
           source-repo: "https://github.com/xingfub/zeabur-memos-backup.git"
           destination-repo: "https://gitee.com/chxin/docker-memos.git"
       - name: Trigger Gitee Pipeline
-        uses: gitee-actions/gitee-trigger-action@v1
-        with:
-          gitee-token: ${{ secrets.GITEE_TOKEN }}
-          gitee-repo: chxin/docker-memos
-          branch: master  # 同步到 Gitee 的分支
+        run: |
+          # 调用 Gitee API 触发 Pipeline
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITEE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://gitee.com/api/v5/repos/chxin/docker-memos/pipelines" \
+            -d '{"ref": "master"}'

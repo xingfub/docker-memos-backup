@@ -161,7 +161,7 @@ def downFile():
             # 下载文件
             ssh.download_file(f"{remote_file_path}memos_prod.db", f"{local_save_path}memos_prod.db")
             ssh.download_file(f"{remote_file_path}memos_prod.db-shm", f"{local_save_path}memos_prod.db-shm")
-            ssh.download_file(f"{remote_file_path}memos_prod.b-wal", f"{local_save_path}memos_prod.db-wal")
+            ssh.download_file(f"{remote_file_path}memos_prod.db-wal", f"{local_save_path}memos_prod.db-wal")
             # 上传文件示例（可选）
             # ssh.upload_file("local_file.txt", "/path/to/remote/upload.txt")
     finally:
