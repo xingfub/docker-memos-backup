@@ -18,7 +18,7 @@ jobs:
       # 新增步骤：配置 SSH 密钥（核心修复）
       - name: Setup SSH for Gitee
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.GITEE_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
         run: |
           # 创建 SSH 目录并设置权限
           mkdir -p ~/.ssh
