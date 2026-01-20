@@ -20,23 +20,33 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ vars.GITEE_SSH_PRIVATE_KEY }}
         run: |
-          # 创建 SSH 目录并设置权限
+          # 彻底重置 SSH 环境
+          rm -rf ~/.ssh
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # 将私钥写入文件并设置正确权限（关键：600）
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          echo "--------------------"
-          echo "$SSH_PRIVATE_KEY"
-          cat ~/.ssh/id_rsa
-          echo "--------------------"
+          # 写入 RSA 私钥，强制清理所有异常字符
+          echo "$SSH_PRIVATE_KEY" | sed -e 's/\r//g' -e '/^$/d' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # 配置 Gitee 为可信主机，避免首次连接的交互提示
-          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
+          # 强制指定密钥类型为 RSA
+          echo -e "Host gitee.com\n  IdentityFile ~/.ssh/id_rsa\n  IdentitiesOnly yes" > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+          
+          # 添加 Gitee 主机指纹（兼容 RSA/ED25519）
+          ssh-keyscan -t rsa,ed25519 gitee.com > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
-          # 测试 SSH 连接（关键！添加这行，能在日志中看到具体错误）
-          ssh -vT git@gitee.com
+          
+          # 调试：验证密钥和连接
+          echo "=== 私钥格式验证 ==="
+          cat ~/.ssh/id_rsa
+          echo "=== SSH 配置 ==="
+          cat ~/.ssh/config
+          echo "=== 尝试解析密钥 ==="
+          ssh-keygen -l -f ~/.ssh/id_rsa || true
+          echo "=== SSH 连接测试 ==="
+          ssh -v -i ~/.ssh/id_rsa -o IdentitiesOnly=yes git@gitee.com || true
+          
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
