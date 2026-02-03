@@ -3,8 +3,10 @@ import sys
 import time;
 from datetime import datetime
 
-def __getSqlFileName():
+def getRemoteFileName(localDbFile):
     now_=datetime.now()
     time_ = now_.strftime('%Y%m%d-%H%M')
-    ret_="{}.zip".format(time_)
+    # 获取localDbFile的扩展名
+    _, ext = os.path.splitext(localDbFile)
+    ret_="{}{}".format(time_, ext)
     return ret_

@@ -2,139 +2,131 @@ import requests
 import os
 from urllib.parse import urljoin
 
-# 禁用SSL警告
-requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
+
+from webdav3.client import Client
+import os
+from datetime import datetime
 class WebDAVClient:
     def __init__(self):
-        self.webdav_hostname = 'https://dav.jianguoyun.com/dav'
-        self.username = "proud2008@qq.com"
-        self.password = "JIANGUOYUNhu0303"
-        self.session = requests.Session()
-        self.session.auth = (self.username, self.password)
-        self.session.verify = False  # 忽略SSL验证
-    
-    def _make_url(self, path):
         """
-        构建完整的WebDAV URL
+        初始化WebDAV客户端
+        
+        Args:
+            webdav_url (str): WebDAV服务器URL
+            username (str): 用户名
+            password (str): 密码
         """
-        if not path.startswith('/'):
-            path = '/' + path
-        return urljoin(self.webdav_hostname, path.lstrip('/'))
-    
-    def check(self, remote_path):
-        """
-        检查远程路径是否存在
-        """
-        try:
-            url = self._make_url(remote_path)
-            response = self.session.request('PROPFIND', url)
-            return response.status_code in [200, 207]
-        except Exception as e:
-            print(f"检查路径存在失败: {str(e)}")
-            return False
-    
-    def mkdir(self, remote_path):
-        """
-        创建远程目录
-        """
-        try:
-            url = self._make_url(remote_path)
-            response = self.session.request('MKCOL', url)
-            return response.status_code in [201, 301]
-        except Exception as e:
-            print(f"创建目录失败: {str(e)}")
-            return False
-    
+        self.options = {
+            'webdav_hostname': 'https://dav.jianguoyun.com/dav',
+            'webdav_login': "proud2008@qq.com",
+            'webdav_password': "aeddig2zsy33wqnn"
+        }
+        self.client = Client(self.options)
+        self.client.verify = False  # 忽略SSL验证（可选）
+        
     def upload_file(self, local_path, remote_path):
         try:
             if not os.path.exists(local_path):
                 print(f"本地文件不存在: {local_path}")
                 return False
-            print(f"本地文件存在: {local_path}")
-            
-            # 确保远程目录存在
+             # 确保远程目录存在
             remote_dir = os.path.dirname(remote_path)
-            if remote_dir and remote_dir != '/':
-                if not self.check(remote_dir):
-                    if self.mkdir(remote_dir):
-                        print(f"创建远程目录成功: {remote_dir}")
-                    else:
-                        print(f"创建远程目录失败: {remote_dir}")
-                        return False
-                print(f"远程目录存在: {remote_dir}")
-            
+            if remote_dir and not self.client.check(remote_dir):
+                self.client.mkdir(remote_dir)    
+            print(f"确保远程目录存在: {remote_dir}")    
             # 上传文件
-            url = self._make_url(remote_path)
-            with open(local_path, 'rb') as file:
-                response = self.session.put(url, data=file)
-            
-            if response.status_code in [200, 201, 204]:
-                print(f"文件上传成功: {local_path} -> {remote_path}")
-                return True
-            else:
-                print(f"文件上传失败: HTTP {response.status_code} - {response.text}")
-                return False
-                
+            self.client.upload_sync(remote_path=remote_path, local_path=local_path)
+            print(f"文件上传成功: {local_path} -> {remote_path}")
+            return True
         except Exception as e:
             print(f"文件上传失败: {str(e)}")
-            import traceback
-            traceback.print_exc()
             return False
     
     def delete_file(self, remote_path):
+        """
+        从WebDAV服务器删除文件
+        
+        Args:
+            remote_path (str): WebDAV服务器上的文件路径
+            
+        Returns:
+            bool: 删除成功返回True，失败返回False
+        """
         try:
-            # 检查文件是否存在
-            if not self.check(remote_path):
+            if not self.client.check(remote_path):
                 print(f"远程文件不存在: {remote_path}")
                 return False
                 
-            # 删除文件
-            url = self._make_url(remote_path)
-            response = self.session.delete(url)
-            
-            if response.status_code in [200, 204]:
-                print(f"文件删除成功: {remote_path}")
-                return True
-            else:
-                print(f"文件删除失败: HTTP {response.status_code} - {response.text}")
-                return False
-                
+            self.client.clean(remote_path)
+            print(f"文件删除成功: {remote_path}")
+            return True
         except Exception as e:
             print(f"文件删除失败: {str(e)}")
-            import traceback
-            traceback.print_exc()
             return False
+    
+    def get_file_list(self, remote_path):
+        """
+        获取WebDAV服务器上的文件列表
+        
+        Args:
+            remote_path (str): WebDAV服务器上的目录路径
+            
+        Returns:
+            list: 文件列表，每个元素包含文件名和路径
+        """
+        try:
+            if not self.client.check(remote_path):
+                print(f"远程目录不存在: {remote_path}")
+                return []
+                
+            # 获取文件列表
+            file_list = self.client.list(remote_path)
+            print(f"获取文件列表成功: {remote_path}")
+            print(f"文件数量: {len(file_list)}")
+            for file in file_list:
+                print(f"  - {file}")
+            return file_list
+        except Exception as e:
+            print(f"获取文件列表失败: {str(e)}")
+            return []
 
 
 
 def uploadFile(local_file,remote_file):
-     # 创建客户端实例
     client = WebDAVClient()
     remote_file_ = f"/imemos/sqlBackup/{remote_file}"
-    r=client.upload_file(local_file, remote_file_)
-    if r:
-        return remote_file_
-    else :
-        return None
-   
+    client.upload_file(local_file, remote_file_)
+    return remote_file_
         
 
 def delFile(remote_file):
-    # 创建客户端实例
     client = WebDAVClient()
-    remote_file_ = f"/imemos/sqlBackup/{remote_file}"
-    r=client.delete_file(remote_file_)
-    if r:
-        return remote_file_
-    else :
-        return None
+    client.delete_file(remote_file)
 
 
-# 使用示例
 if __name__ == "__main__":
-    uploadFile("requirements.txt","requirements.txt")
-   
+    # 测试上传文件
+    # local_file = "main.py"
+    # remote_file = "test.txt"
+    # uploadFile(local_file,remote_file)
     
-   
+    # 测试获取文件列表
+    client = WebDAVClient()
+    remote_dir = "/imemos/sqlBackup"
+    client.get_file_list(remote_dir)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

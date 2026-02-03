@@ -1,7 +1,6 @@
 from webdav3.client import Client
 import os
 from datetime import datetime
-from utils import __getSqlFileName
 class WebDAVClient:
     def __init__(self):
         """

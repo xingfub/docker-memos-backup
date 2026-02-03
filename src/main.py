@@ -1,17 +1,18 @@
 from remotePathUtils import writeKey
-from zeaburUtils import downFile as downFileZeabur
-from sshUtils import downFile as downFileSsh
 from qiniuUtils import uploadFile as uploadFileQiniu,delFile as delFileQiniu
 from alistUtils import uploadFile as uploadFileAlist,delFile as delFileAlist
-from utils import __getSqlFileName as getSqlFileName
+from utils import getRemoteFileName as getRemoteFileName
 from jianguoUtils import uploadFile as uploadFileJianguo,delFile as delFileJianguo
 import os
 from mailutils import uploadFile as uploadFileMail
+from backupUtils.mysqlBackup import downFileMySql
+
+
 
 def uploadFile(localDbFile):
       # 2、上传文件
     print("2.uploadFile")
-    remoteFileName=getSqlFileName()
+    remoteFileName=getRemoteFileName(localDbFile)
     qiniuKey = uploadFileQiniu(localDbFile,remoteFileName)
     alistKey=uploadFileAlist(localDbFile,remoteFileName)
     jianguoKey=uploadFileJianguo(localDbFile,remoteFileName)
@@ -32,23 +33,13 @@ def uploadFile(localDbFile):
 
 if __name__ == "__main__":
     # 1、下载文件
-    print("1.downFileZeabur")
-    localDbFile=downFileZeabur()
+    
+    localDbFile=downFileMySql()
     #文件长度大于0
     if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
         # 2、上传文件
         uploadFile(localDbFile)
     else:
         print("zeabure downFile fail ,file size is 0")
-    sshbackup=False
-    if sshbackup:
-        # 1、下载文件
-        print("1.downFileSsh")
-        localDbFile=downFileSsh()
-        if  os.path.exists(localDbFile) and os.path.getsize(localDbFile) >100:
-            # 2、上传文件
-            uploadFile(localDbFile)
-        else:
-            print("ssh downFile fail ,file size is 0")
     
  
