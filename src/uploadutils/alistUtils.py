@@ -14,6 +14,7 @@ class WebDAVClient:
         self.options = {
             'webdav_hostname': 'https://a.xingfub.dpdns.org/dav/',
             'webdav_login': "admin",
+            'webdav_timeout':300,
             'webdav_password': "ALISThu0303"
         }
         self.client = Client(self.options)
@@ -64,8 +65,8 @@ class WebDAVClient:
 def uploadFile(local_file,remote_file):
     client = WebDAVClient()
     remote_file_ = f"/a/imemos/sqlBackup/{remote_file}"
-    client.upload_file(local_file, remote_file_)
-    if True:
+    t=client.upload_file(local_file, remote_file_)
+    if t:
         return remote_file_
     else:
         return None
