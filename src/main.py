@@ -1,9 +1,14 @@
+import sys
+import os
+
+# 添加当前目录到Python路径
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from remotePathUtils import writeKey
 from uploadutils.qiniuUtils import uploadFile as uploadFileQiniu,delFile as delFileQiniu
 from uploadutils.alistUtils import uploadFile as uploadFileAlist,delFile as delFileAlist
 from utils import getRemoteFileName as getRemoteFileName
 from uploadutils.jianguoUtils import uploadFile as uploadFileJianguo,delFile as delFileJianguo
-import os
 from uploadutils.mailutils import uploadFile as uploadFileMail
 from uploadutils.s3Utils import uploadFile as uploadFileS3,delFile as delFileS3
 from backupUtils.mysqlBackup import downFileMySql

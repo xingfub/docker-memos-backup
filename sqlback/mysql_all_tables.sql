@@ -1,5 +1,5 @@
 -- MySQL 数据库导出文件
--- 导出时间: 2026-02-04 12:02:24
+-- 导出时间: 2026-02-05 11:20:43
 -- 数据库名: memos2
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -1820,9 +1820,11 @@ CREATE TABLE `resource` (
   `payload` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- 表 resource 无数据
+-- 表 resource 数据
+INSERT INTO `resource` (`id`, `uid`, `creator_id`, `created_ts`, `updated_ts`, `filename`, `blob`, `type`, `size`, `memo_id`, `storage_type`, `reference`, `payload`) VALUES
+(1, 'n6UECDuJjjhen75oDTRcXW', 1, '2026-02-05 03:04:32', '2026-02-05 03:04:32', 'logs-2026-02-03T03_10_52.201Z.txt', NULL, 'text/plain', 9424, NULL, 'S3', 'https://objectstorageapi.ap-southeast-1.clawcloudrun.com/plp4i1d0-xinfub/imemos/storage/2026/1770260671_logs-2026-02-03T03_10_52.201Z.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=plp4i1d0%2F20260205%2F0%2Fs3%2Faws4_request&X-Amz-Date=20260205T030432Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=49b4936a9805fbff215b23cb8001c325ae1b9faa7a01bd889ffe4f40482928c4', '{"s3Object":{"s3Config":{"accessKeyId":"plp4i1d0", "accessKeySecret":"c84kql8qldjwmm4k", "endpoint":"https://objectstorageapi.ap-southeast-1.clawcloudrun.com", "region":"0", "bucket":"plp4i1d0-xinfub", "usePathStyle":true}, "key":"imemos/storage/2026/1770260671_logs-2026-02-03T03_10_52.201Z.txt", "lastPresignedTime":"2026-02-05T03:04:32.332850207Z"}}');
 
 -- ----------------------------
 -- 表结构: system_setting
@@ -1842,7 +1844,7 @@ INSERT INTO `system_setting` (`name`, `value`, `description`) VALUES
 ('MEMO_RELATED', '{"contentLengthLimit":8192000, "enableDoubleClickEdit":true, "enableLinkPreview":true, "reactions":["👍", "👎", "❤️", "🎉", "😄", "😕", "😢", "😡"], "disableMarkdownShortcuts":true, "enableBlurNsfwContent":true, "nsfwTags":["nsfw"]}', ''),
 ('secret-session', '95021997-3362-4630-8f12-4a2644be63be', ''),
 ('server-id', '552a6834-e015-4525-b098-f87d022d6034', ''),
-('STORAGE', '{"storageType":"S3", "filepathTemplate":"{year}/{timestamp}_{filename}", "uploadSizeLimitMb":"300", "s3Config":{"accessKeyId":"BQMQT3ANJJp9w8QM2KhG", "accessKeySecret":"dy8A9WkR1Bhdjiy4YNixfziGLd2ABxLHtiMBeUWc", "endpoint":"https://s3.xingfub.dpdns.org", "region":"0", "bucket":"m", "usePathStyle":true}}', ''),
+('STORAGE', '{"storageType":"S3", "filepathTemplate":"imemos/storage/{year}/{timestamp}_{filename}", "uploadSizeLimitMb":"300", "s3Config":{"accessKeyId":"plp4i1d0", "accessKeySecret":"c84kql8qldjwmm4k", "endpoint":"https://objectstorageapi.ap-southeast-1.clawcloudrun.com", "region":"0", "bucket":"plp4i1d0-xinfub", "usePathStyle":true}}', ''),
 ('WORKSPACE_SETTING_GENERAL', '{}', '');
 
 -- ----------------------------
@@ -1888,7 +1890,7 @@ INSERT INTO `user_setting` (`user_id`, `key`, `value`) VALUES
 (1, 'ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6MTc0MDEwNzQ4MSwiaWF0IjoxNzM5NTAyNjgxfQ.NB7P2r_PS2NLU-WG7UQK72_t6wozcXx8IDuphNcDl6M", "description":"user login"}]}'),
 (1, 'GENERAL', '{"locale":"zh-Hans", "appearance":"system", "memoVisibility":"PRIVATE"}'),
 (1, 'LOCALE', 'zh-Hans'),
-(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-03T09:41:12.798129041Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-04T02:52:04.589317531Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
+(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-05T03:04:37.495695449Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-04T02:52:04.589317531Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
 (1, 'SHORTCUTS', '{}'),
 (1, 'USER_SETTING_ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6NDkxMjU0MjA1OCwiaWF0IjoxNzU4OTQyMDU4fQ.aULmPfuU_Rg0MSW2mIzamEaxhpLixLYx8bZcYGVG_2Q","description":"user login"}]}'),
 (1, 'USER_SETTING_LOCALE', 'zh-Hans'),
@@ -1899,6 +1901,6 @@ INSERT INTO `user_setting` (`user_id`, `key`, `value`) VALUES
 (3, 'ACCESS_TOKENS', '{}'),
 (3, 'GENERAL', '{"locale":"zh-Hans"}'),
 (3, 'LOCALE', 'zh-Hans'),
-(3, 'SESSIONS', '{"sessions":[{"sessionId":"9b4c2bf4-d538-4076-a3ac-fdd45dcc7ec5", "createTime":"2025-11-09T06:39:03.887857135Z", "lastAccessedTime":"2025-11-10T07:37:24.010305398Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.0.3.953 Mobile Safari/537.36", "ipAddress":"36.32.49.155", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"a272ac89-7c0c-48a5-8d01-1afeb90ad36f", "createTime":"2025-11-15T05:58:44.602510122Z", "lastAccessedTime":"2025-11-15T06:18:57.919640146Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.0.5.960 Mobile Safari/537.36", "ipAddress":"58.243.32.29", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}');
+(3, 'SESSIONS', '{"sessions":[{"sessionId":"9b4c2bf4-d538-4076-a3ac-fdd45dcc7ec5", "createTime":"2025-11-09T06:39:03.887857135Z", "lastAccessedTime":"2025-11-10T07:37:24.010305398Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.0.3.953 Mobile Safari/537.36", "ipAddress":"36.32.49.155", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"a272ac89-7c0c-48a5-8d01-1afeb90ad36f", "createTime":"2025-11-15T05:58:44.602510122Z", "lastAccessedTime":"2025-11-15T06:18:57.919640146Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.0.5.960 Mobile Safari/537.36", "ipAddress":"58.243.32.29", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"6c947cd9-202a-4db9-953e-0d054e74aa18", "createTime":"2026-02-04T10:14:35.625368920Z", "lastAccessedTime":"2026-02-04T10:25:30.926760293Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 13; zh-Hans-CN; ELN-W09 Build/HONORELN-W09) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/7.14.8.883 Mobile Safari/537.36", "ipAddress":"192.168.95.1", "deviceType":"mobile", "os":"Android 13", "browser":"Chrome 123.0.6312.80"}}]}');
 
 SET FOREIGN_KEY_CHECKS = 1;
