@@ -83,8 +83,12 @@ def uploadFile(local_file, remote_file):
         str: 上传后的S3路径
     """
     client = S3Client()
-    client.upload_file(local_file, remote_file)
-    return f"s3://{Bucket_Name}/{remote_file}"
+    remote_file_ = f"imemos/sqlBackup/{remote_file}"
+    t=client.upload_file(local_file, remote_file_)
+    if t:
+        return f"{remote_file_}"
+    else:
+        return None
 
 def delFile(remote_file):
     """
@@ -100,6 +104,6 @@ if __name__ == "__main__":
     # 测试上传文件
     local_file = "main.py"
     remote_file = "test.txt"
-    # uploadFile(local_file, remote_file)
-    # 测试删除文件
-    delFile(remote_file)
+    t=uploadFile(local_file, remote_file)
+    if t:
+        delFile(t)
