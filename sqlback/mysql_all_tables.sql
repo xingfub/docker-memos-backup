@@ -1,5 +1,5 @@
 -- MySQL 数据库导出文件
--- 导出时间: 2026-02-05 04:06:04
+-- 导出时间: 2026-02-06 04:06:31
 -- 数据库名: memos2
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -68,7 +68,7 @@ CREATE TABLE `memo` (
   `payload` json NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3559 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3560 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 表 memo 数据
 INSERT INTO `memo` (`id`, `uid`, `creator_id`, `created_ts`, `updated_ts`, `row_status`, `content`, `visibility`, `pinned`, `payload`) VALUES
@@ -1739,7 +1739,8 @@ INSERT INTO `memo` (`id`, `uid`, `creator_id`, `created_ts`, `updated_ts`, `row_
 (3555, 'MMEQA3E8XNk6oGGKkpank7', 1, '2026-01-31 23:20:25', '2026-01-31 23:26:11', 'NORMAL', '今天是 2026 年 1 月 31 日(周六)，还是好疼，现主要是腿疼，感觉腿部和腰部一样了，一用力就好疼，好想出去逛逛公园呀，拉个痛痛快快的大便，已经 6 天没拉了，虽然通气还是担心呀，水也喝的少了，怕上厕所。\n家里面还是一样的鸡飞狗跳，我妈和敬又不可调和的矛盾，敬总是觉得我妈对她不好，我妈觉得好，可她不知道表现的很明显。给我倒水要给我捏，不达目的不罢休，一遍一遍的在天津时就够够。吃个饭刷锅积极的很，干完了就来回逛晃看的心烦，自己不想着出去走走什么在外面晃晃，就在家撅着，家里人没一个喜欢她的，加加洗澡不愿意让她擦看，果果虽然不嚷她，也不跟她聊说啥。这样对她不好，希望那天我走个她也没那么伤心吧。\n敬上班忙，心烦，还有给娃讲作业，没那多时间管我，理解算了本就是个废人，还给他添堵干嘛，没时间管就不管吧，咬咬牙忍一忍就过去了，心态好一些，他们才是未来。\n知道自己时日不多，想开点我会离去，想开点今会改嫁。孩子吗我也不知会怎样。一家人就散了。敬上班是有钱就存，理解她的焦虑为自己以后考虑为孩子考虑。我妈把钱转给我不直接给敬不是也有她的心思吗，知道是为了我，怕敬不管我了让我有点保障，有个屁用自己都动不了了钱有个屁用呀。大家都都自己的心思。\n一家人心不齐，天天鸡飞狗跳的，怎么能有好的未来。孩子们爸爸帮不了你们，对不起，注定你们也是苦命的，自己努力了\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
 (3556, 'EqWptqWLVmknLgvbhkpsx2', 1, '2026-02-01 08:54:33', '2026-02-01 08:54:33', 'NORMAL', '今天是 2026 年 2 月 1 日(周日)，昨天没睡好，夜里左腿好疼，可能昨天晚上走路多了些吧。\n今天比较开心的事，拉大便了，很顺便好多，看样子乳果糖还是挺好使的，比较温和，要一天左右，不会直接拉稀。亲自做了尝试了，哈哈哈\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
 (3557, 'CKLubuAxgJbBSQJCGKNNvu', 1, '2026-02-03 10:41:50', '2026-02-03 10:44:22', 'NORMAL', '今天是 2026 年 2 月 3 日(周二)，前些天因为数据的问题记录日记的容器重启了导致数据恢复了不能再写了否则下次恢复数据就乱了，今天用 MySQL 当做数据库，想之后可以直接连接数据库备份，目前在数据传输上卡住了，因为数据格式不一致恢复有些麻烦了，嘿事可真多呀，直接写脚本这麻烦呀。明天在想办法吧。\n腰疼好很多了，可以下来走了要不是今天搞这个就出去了。\n明天去学校开家长会拿通知书，敬问了果果的成绩 463，好伤心呀，这样下去可怎么整，数学 86 还没有及格，明天和她一起去吧，听听老师说什么，\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
-(3558, 'YnMuSRw7vuBnuDNqnDsDFM', 1, '2026-02-03 10:45:02', '2026-02-03 10:45:02', 'NORMAL', '亏妻，百财不入；亏夫，百病缠身；亏孝，百事不顺；亏身，脏腑不和；亏心，天地不容。\n​\n- 你提供的扩展版（八句）\n亏妻者百财不入，家宅不宁，福气远行；\n亏夫者百病缠身，心力交瘁，诸事不顺；\n爱夫者富贵相随，携手共进，幸福满盈；\n夫妻同心，其利断金，恩爱相伴，万事兴旺！\n\n#精彩剪辑 ', 'PUBLIC', 0, '{"tags": ["精彩剪辑"], "property": {}}');
+(3558, 'YnMuSRw7vuBnuDNqnDsDFM', 1, '2026-02-03 10:45:02', '2026-02-03 10:45:02', 'NORMAL', '亏妻，百财不入；亏夫，百病缠身；亏孝，百事不顺；亏身，脏腑不和；亏心，天地不容。\n​\n- 你提供的扩展版（八句）\n亏妻者百财不入，家宅不宁，福气远行；\n亏夫者百病缠身，心力交瘁，诸事不顺；\n爱夫者富贵相随，携手共进，幸福满盈；\n夫妻同心，其利断金，恩爱相伴，万事兴旺！\n\n#精彩剪辑 ', 'PUBLIC', 0, '{"tags": ["精彩剪辑"], "property": {}}'),
+(3559, 'mEirPbeTzqm7dLD4ccpaB8', 1, '2026-02-05 13:19:53', '2026-02-05 13:19:53', 'NORMAL', '今天是 2026 年 2 月 5 日(周四)，今天跟果果一起讲物理时嚷她，突然有所想，如果很喜欢一个东西会想着破坏它吗，爱它都来不及怎么会伤害它呢，对人也是呀，如果很心疼她关心爱护她怎么可能会嚷她呢，让她伤心呢，说明没慢慢的不太在意她了。\n按照这个理论是不是敬动不动的嚷我吵架是不是她一直都这样的，没那在意我，根本不是说控制不了自己的情绪，还是不够在意。\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}');
 
 -- ----------------------------
 -- 表结构: memo_organizer
@@ -1890,7 +1891,7 @@ INSERT INTO `user_setting` (`user_id`, `key`, `value`) VALUES
 (1, 'ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6MTc0MDEwNzQ4MSwiaWF0IjoxNzM5NTAyNjgxfQ.NB7P2r_PS2NLU-WG7UQK72_t6wozcXx8IDuphNcDl6M", "description":"user login"}]}'),
 (1, 'GENERAL', '{"locale":"zh-Hans", "appearance":"system", "memoVisibility":"PRIVATE"}'),
 (1, 'LOCALE', 'zh-Hans'),
-(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-05T03:04:37.495695449Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-04T02:52:04.589317531Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
+(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-05T03:04:37.495695449Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-05T13:19:53.934949405Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
 (1, 'SHORTCUTS', '{}'),
 (1, 'USER_SETTING_ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6NDkxMjU0MjA1OCwiaWF0IjoxNzU4OTQyMDU4fQ.aULmPfuU_Rg0MSW2mIzamEaxhpLixLYx8bZcYGVG_2Q","description":"user login"}]}'),
 (1, 'USER_SETTING_LOCALE', 'zh-Hans'),
