@@ -1,5 +1,5 @@
 -- MySQL 数据库导出文件
--- 导出时间: 2026-02-06 04:06:31
+-- 导出时间: 2026-02-07 04:00:31
 -- 数据库名: memos2
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -68,7 +68,7 @@ CREATE TABLE `memo` (
   `payload` json NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3560 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3561 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 表 memo 数据
 INSERT INTO `memo` (`id`, `uid`, `creator_id`, `created_ts`, `updated_ts`, `row_status`, `content`, `visibility`, `pinned`, `payload`) VALUES
@@ -1740,7 +1740,8 @@ INSERT INTO `memo` (`id`, `uid`, `creator_id`, `created_ts`, `updated_ts`, `row_
 (3556, 'EqWptqWLVmknLgvbhkpsx2', 1, '2026-02-01 08:54:33', '2026-02-01 08:54:33', 'NORMAL', '今天是 2026 年 2 月 1 日(周日)，昨天没睡好，夜里左腿好疼，可能昨天晚上走路多了些吧。\n今天比较开心的事，拉大便了，很顺便好多，看样子乳果糖还是挺好使的，比较温和，要一天左右，不会直接拉稀。亲自做了尝试了，哈哈哈\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
 (3557, 'CKLubuAxgJbBSQJCGKNNvu', 1, '2026-02-03 10:41:50', '2026-02-03 10:44:22', 'NORMAL', '今天是 2026 年 2 月 3 日(周二)，前些天因为数据的问题记录日记的容器重启了导致数据恢复了不能再写了否则下次恢复数据就乱了，今天用 MySQL 当做数据库，想之后可以直接连接数据库备份，目前在数据传输上卡住了，因为数据格式不一致恢复有些麻烦了，嘿事可真多呀，直接写脚本这麻烦呀。明天在想办法吧。\n腰疼好很多了，可以下来走了要不是今天搞这个就出去了。\n明天去学校开家长会拿通知书，敬问了果果的成绩 463，好伤心呀，这样下去可怎么整，数学 86 还没有及格，明天和她一起去吧，听听老师说什么，\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
 (3558, 'YnMuSRw7vuBnuDNqnDsDFM', 1, '2026-02-03 10:45:02', '2026-02-03 10:45:02', 'NORMAL', '亏妻，百财不入；亏夫，百病缠身；亏孝，百事不顺；亏身，脏腑不和；亏心，天地不容。\n​\n- 你提供的扩展版（八句）\n亏妻者百财不入，家宅不宁，福气远行；\n亏夫者百病缠身，心力交瘁，诸事不顺；\n爱夫者富贵相随，携手共进，幸福满盈；\n夫妻同心，其利断金，恩爱相伴，万事兴旺！\n\n#精彩剪辑 ', 'PUBLIC', 0, '{"tags": ["精彩剪辑"], "property": {}}'),
-(3559, 'mEirPbeTzqm7dLD4ccpaB8', 1, '2026-02-05 13:19:53', '2026-02-05 13:19:53', 'NORMAL', '今天是 2026 年 2 月 5 日(周四)，今天跟果果一起讲物理时嚷她，突然有所想，如果很喜欢一个东西会想着破坏它吗，爱它都来不及怎么会伤害它呢，对人也是呀，如果很心疼她关心爱护她怎么可能会嚷她呢，让她伤心呢，说明没慢慢的不太在意她了。\n按照这个理论是不是敬动不动的嚷我吵架是不是她一直都这样的，没那在意我，根本不是说控制不了自己的情绪，还是不够在意。\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}');
+(3559, 'mEirPbeTzqm7dLD4ccpaB8', 1, '2026-02-05 13:19:53', '2026-02-05 13:19:53', 'NORMAL', '今天是 2026 年 2 月 5 日(周四)，今天跟果果一起讲物理时嚷她，突然有所想，如果很喜欢一个东西会想着破坏它吗，爱它都来不及怎么会伤害它呢，对人也是呀，如果很心疼她关心爱护她怎么可能会嚷她呢，让她伤心呢，说明没慢慢的不太在意她了。\n按照这个理论是不是敬动不动的嚷我吵架是不是她一直都这样的，没那在意我，根本不是说控制不了自己的情绪，还是不够在意。\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}'),
+(3560, '9otU6nWk5NMk3cFeoodm4f', 1, '2026-02-06 22:40:39', '2026-02-06 22:40:39', 'NORMAL', '今天是 2025 年 2 月 7 日(周五)，给我妈买的今天的车票回去吧，在这她也不开心，天天在家里晃来晃去的，一点不想着别人，洗衣服不想着关门，写个作业问这问那的。随便的很。\n昨天敬说加加招过生日了，我妈去外面买些卤菜吃，给敬转了 200 元。 夜里 2 次被我妈咳醒了，不知是不是冻的，她就想着我，其次是加加明显的很，可怜之人必有可恨之处呀。真对。2 代人观念不一样天天吵架，敬也有点从男轻女。可能母亲更喜欢儿子吧。\n夜里做梦去公园又去超市的找敬没找到在卖房的地方睡着了，醒了发现自己是在家里，原来是被人送回来的，晕倒了，还旁边的人说我家在那的医生检查说依维莫司吃多了，乱七八糟的嘿又是那么的真实。\n\n#日记 ', 'PRIVATE', 0, '{"tags": ["日记"], "property": {}}');
 
 -- ----------------------------
 -- 表结构: memo_organizer
@@ -1891,7 +1892,7 @@ INSERT INTO `user_setting` (`user_id`, `key`, `value`) VALUES
 (1, 'ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6MTc0MDEwNzQ4MSwiaWF0IjoxNzM5NTAyNjgxfQ.NB7P2r_PS2NLU-WG7UQK72_t6wozcXx8IDuphNcDl6M", "description":"user login"}]}'),
 (1, 'GENERAL', '{"locale":"zh-Hans", "appearance":"system", "memoVisibility":"PRIVATE"}'),
 (1, 'LOCALE', 'zh-Hans'),
-(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-05T03:04:37.495695449Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-05T13:19:53.934949405Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
+(1, 'SESSIONS', '{"sessions":[{"sessionId":"4f7968f4-3812-4e86-b389-872e6065e0b6", "createTime":"2026-01-20T12:18:31.064079791Z", "lastAccessedTime":"2026-02-01T01:59:28.913602429Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.2.5.1000 Mobile Safari/537.36", "ipAddress":"240e:45b:68d:e100:8042:9ff:feb0:ba5f", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}, {"sessionId":"e1edf22b-2b31-4e4b-855c-28eb4a549741", "createTime":"2026-02-03T09:41:00.487078465Z", "lastAccessedTime":"2026-02-06T07:16:43.233557091Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.1.5.666", "ipAddress":"192.168.54.1", "deviceType":"desktop", "os":"Windows 10/11", "browser":"Chrome 130.0.0.0"}}, {"sessionId":"edcfec4e-6f41-4fba-b8ac-423a901791ff", "createTime":"2026-02-03T10:40:58.594242117Z", "lastAccessedTime":"2026-02-06T22:40:40.246614130Z", "clientInfo":{"userAgent":"Mozilla/5.0 (Linux; U; Android 15; zh-CN; 23049RAD8C Build/AQ3A.241006.001) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.6312.80 Quark/10.3.5.1010 Mobile Safari/537.36", "ipAddress":"192.168.54.1", "deviceType":"mobile", "os":"Android 15", "browser":"Chrome 123.0.6312.80"}}]}'),
 (1, 'SHORTCUTS', '{}'),
 (1, 'USER_SETTING_ACCESS_TOKENS', '{"accessTokens":[{"accessToken":"eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoiIiwiaXNzIjoibWVtb3MiLCJzdWIiOiIxIiwiYXVkIjpbInVzZXIuYWNjZXNzLXRva2VuIl0sImV4cCI6NDkxMjU0MjA1OCwiaWF0IjoxNzU4OTQyMDU4fQ.aULmPfuU_Rg0MSW2mIzamEaxhpLixLYx8bZcYGVG_2Q","description":"user login"}]}'),
 (1, 'USER_SETTING_LOCALE', 'zh-Hans'),
