@@ -1,5 +1,5 @@
 -- MySQL 数据库导出文件
--- 导出时间: 2026-02-07 04:00:31
+-- 导出时间: 2026-02-08 04:26:19
 -- 数据库名: memos2
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
