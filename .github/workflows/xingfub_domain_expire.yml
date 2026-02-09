@@ -23,6 +23,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Python script
+        env: # Or as an environment variable
+          XINGFUB_DOMAIN_EXPIRE: ${{ vars.XINGFUB_DOMAIN_EXPIRE  }}
         run: |
           cd src
           python main_domain.py
