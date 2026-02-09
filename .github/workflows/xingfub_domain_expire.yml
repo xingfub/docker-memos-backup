@@ -1,0 +1,28 @@
+name: xingfub_domain_expire_check
+
+on:
+  schedule:
+    - cron: '0 0 2 * *'  # 每天凌晨2点UTC执行
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13.0'  # 使用适合你的Python版本
+
+      - name: Install dependencies
+        run: |
+          cd src
+          pip install -r requirements.txt
+
+      - name: Run Python script
+        run: |
+          cd src
+          python main_domain.py
