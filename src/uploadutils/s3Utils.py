@@ -82,6 +82,7 @@ def uploadFile(local_file, remote_file):
     Returns:
         str: 上传后的S3路径
     """
+    print(f"------s3-----")
     client = S3Client()
     remote_file_ = f"imemos/sqlBackup/{remote_file}"
     t=client.upload_file(local_file, remote_file_)

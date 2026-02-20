@@ -98,6 +98,7 @@ class WebDAVClient:
 
 
 def uploadFile(local_file,remote_file):
+    print(f"------jianguo-----")
     client = WebDAVClient()
     remote_file_ = f"{remote_file}"
     t=client.upload_file(local_file, remote_file_)

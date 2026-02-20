@@ -63,6 +63,7 @@ class WebDAVClient:
 
 
 def uploadFile(local_file,remote_file):
+    print(f"------aList-----")
     client = WebDAVClient()
     remote_file_ = f"/a/imemos/sqlBackup/{remote_file}"
     t=client.upload_file(local_file, remote_file_)

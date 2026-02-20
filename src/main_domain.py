@@ -1,3 +1,4 @@
+import re
 import requests
 import json
 import datetime
@@ -66,7 +67,7 @@ def get_domain_expire_date_by_digitalplat(domain_name):
 def get_domain_expire_date_by_worker(domain_name):
     try:
         # 构建URL
-        url = f"https://music.xingfub.dpdns.org/xingfub/expiry"
+        url = f"https://tools.xingfub.dpdns.org/xingfub/expiry"
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/6.3.5.725',
@@ -130,6 +131,6 @@ if __name__ == "__main__":
     print(f"距离 {expire_date} 还有 {days_until} 天")
     if days_until > 90:
         print("不需要发送邮件提醒,程序退出")
-        exit(1)
+        exit(0)
     t=send_post_json_request(domain_name,expire_date,days_until)
     print(t)
