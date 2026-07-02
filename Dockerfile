@@ -2,19 +2,8 @@ FROM neosmemo/memos:0.25.1
 
 RUN apk update && apk add --no-cache \
     nginx \
-    curl \
     python3.14 \
-    py3-pip \
-    build-base \
-    openssl-dev \
-    zlib-dev \
-    bzip2-dev \
-    readline-dev \
-    sqlite-dev \
-    ncurses-dev \
-    tk-dev \
-    libffi-dev \
-    xz-dev
+    py3-pip 
 
 RUN ln -sf /usr/bin/python3.14 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
