@@ -35,6 +35,6 @@ RUN pip install -r /app/src/requirements.txt
 
 RUN chmod +x /start.sh
 
-EXPOSE 80
+EXPOSE 80 3000 5240
 
 CMD ["/start.sh"]
