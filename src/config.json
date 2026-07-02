@@ -1,0 +1,17 @@
+{
+  "webdav": {
+    "url": "11",
+    "username": "11",
+    "password": "11"
+  },
+  "s3": {
+    "endpoint_url": "11",
+    "access_key": "111",
+    "secret_key": "111",
+    "bucket": "111"
+  },
+  "email": {
+    "to_email": "12"
+  },
+  "password": "11"
+}

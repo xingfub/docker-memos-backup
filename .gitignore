@@ -1,3 +1,4 @@
 nginx/log/*
 mysqlBackup/*
 src/__pycache__
+src/**/__pycache__

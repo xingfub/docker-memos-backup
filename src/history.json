@@ -1,0 +1,29 @@
+[
+  {
+    "timestamp": "2026-07-02 13:53:06",
+    "status": "success",
+    "types": [
+      "email",
+      "webdav",
+      "s3"
+    ]
+  },
+  {
+    "timestamp": "2026-07-02 13:52:58",
+    "status": "success",
+    "types": [
+      "email",
+      "webdav",
+      "s3"
+    ]
+  },
+  {
+    "timestamp": "2026-07-02 13:48:13",
+    "status": "success",
+    "types": [
+      "email",
+      "webdav",
+      "s3"
+    ]
+  }
+]

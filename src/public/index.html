@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Memos 服务</title>
+    <script src="https://unpkg.com/vue@2.7.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@1.6.0/dist/axios.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .app-container { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 24px 0; border-right: 1px solid rgba(255,255,255,0.1); }
+        .logo { text-align: center; padding: 0 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+        .logo-icon { font-size: 40px; margin-bottom: 8px; }
+        .logo-text { color: white; font-size: 18px; font-weight: 600; }
+        .nav-menu { list-style: none; padding: 0 16px; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; }
+        .nav-link:hover { background: rgba(255,255,255,0.1); color: white; }
+        .nav-link.active { background: rgba(255,255,255,0.2); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .nav-icon { font-size: 20px; }
+        .main-content { flex: 1; padding: 24px; overflow-y: auto; }
+        .content-wrapper { background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); min-height: calc(100vh - 96px); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-container { background: white; border-radius: 16px; width: 90%; max-width: 420px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+        .modal-header { padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; }
+        .modal-title { margin: 0; font-size: 20px; font-weight: 600; }
+        .modal-body { padding: 28px 24px; }
+        .form-input { width: 100%; padding: 14px 18px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 15px; transition: all 0.3s; box-sizing: border-box; }
+        .form-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 4px rgba(102,126,234,0.1); }
+        .error-message { color: #ef4444; font-size: 13px; margin-top: 10px; }
+        .modal-footer { padding: 20px 24px; background: #f9fafb; border-top: 1px solid #f3f4f6; }
+        .btn { padding: 12px 28px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 100%; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        .backup-selector { display: flex; gap: 14px; margin-bottom: 28px; }
+        .backup-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 16px; border: 2px solid #e5e7eb; border-radius: 14px; background: white; cursor: pointer; transition: all 0.35s; }
+        .backup-btn:hover { border-color: #d1d5db; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .backup-btn.active { border-color: #667eea; background: rgba(102,126,234,0.06); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(102,126,234,0.15); }
+        .backup-btn .icon { font-size: 28px; margin-bottom: 10px; }
+        .backup-btn .label { font-size: 14px; font-weight: 600; color: #374151; }
+        .backup-btn.active .label { color: #667eea; }
+        .form-card, .upload-card, .settings-card { background: white; border-radius: 14px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid #f3f4f6; }
+        .form-title, .settings-title { margin: 0 0 24px 0; font-size: 20px; font-weight: 600; color: #1f2937; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 600; color: #4b5563; margin-bottom: 8px; }
+        .message { padding: 14px 18px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .message.success { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+        .message.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .form-actions { display: flex; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #f3f4f6; gap: 12px; }
+        .upload-area { border: 2px dashed #e5e7eb; border-radius: 14px; padding: 50px 24px; text-align: center; cursor: pointer; transition: all 0.35s; background: #fafafa; }
+        .upload-area:hover { border-color: #667eea; background: rgba(102,126,234,0.04); }
+        .upload-icon { font-size: 56px; margin-bottom: 16px; }
+        .upload-text { font-size: 17px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        .upload-hint { font-size: 14px; color: #9ca3af; }
+        .file-info { display: flex; align-items: center; gap: 14px; padding: 20px; background: #f9fafb; border-radius: 12px; margin-top: 24px; border: 1px solid #e5e7eb; }
+        .file-icon { font-size: 40px; }
+        .file-details { flex: 1; }
+        .file-name { font-size: 15px; font-weight: 600; color: #374151; }
+        .file-size { font-size: 13px; color: #9ca3af; margin-top: 4px; }
+        .remove-btn { width: 36px; height: 36px; border: none; border-radius: 50%; background: #fee2e2; color: #ef4444; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .remove-btn:hover { background: #fecaca; transform: scale(1.15); }
+        .upload-progress { margin-top: 20px; }
+        .progress-bar { height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 5px; transition: width 0.3s; }
+        .progress-text { text-align: center; font-size: 13px; color: #667eea; margin-top: 10px; }
+        .info-card { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 14px; padding: 24px; border: 1px solid #bfdbfe; margin-top: 20px; }
+        .info-title { margin: 0 0 14px 0; font-size: 15px; font-weight: 600; color: #1e40af; }
+        .info-list { margin: 0; padding-left: 22px; }
+        .info-list li { font-size: 14px; color: #2563eb; margin-bottom: 8px; }
+        @media (max-width: 768px) { .app-container { flex-direction: column; } .sidebar { width: 100%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 0; } .nav-menu { display: flex; overflow-x: auto; gap: 8px; } .nav-item { margin-bottom: 0; } .nav-link { white-space: nowrap; } .backup-selector { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div v-if="showPasswordModal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header"><h3 class="modal-title">请输入密码</h3></div>
+                <div class="modal-body">
+                    <input type="password" v-model="password" class="form-input" placeholder="请输入访问密码" @keyup.enter="handlePasswordSubmit" autofocus />
+                    <div v-if="passwordError" class="error-message">错误: {{passwordError}}</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @click="handlePasswordSubmit">确认</button>
+                </div>
+            </div>
+        </div>
+        <div v-show="authenticated" class="app-container">
+            <aside class="sidebar">
+                <div class="logo"><div class="logo-icon">📦</div><div class="logo-text">Memos 服务</div></div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><div :class="['nav-link', {active:activeTab==='backup'}]" @click="activeTab='backup'"><span class="nav-icon">💾</span><span>备份</span></div></li>
+                    <li class="nav-item"><div :class="['nav-link', {active:activeTab==='restore'}]" @click="activeTab='restore'"><span class="nav-icon">🔄</span><span>还原</span></div></li>
+                    <li class="nav-item"><div :class="['nav-link', {active:activeTab==='settings'}]" @click="activeTab='settings'"><span class="nav-icon">⚙️</span><span>设置</span></div></li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <div class="content-wrapper">
+                    <div style="padding:28px;">
+                        <div v-if="activeTab==='backup'">
+                            <div class="backup-selector">
+                                <button v-for="type in backupTypes" :key="type.value" :class="['backup-btn',{active:backupType===type.value}]" @click="backupType=type.value">
+                                    <span class="icon">{{type.icon}}</span>
+                                    <span class="label">{{type.label}}</span>
+                                </button>
+                            </div>
+                            <div class="form-card">
+                                <div v-if="backupType==='email'">
+                                    <h4 class="form-title">📧 邮件备份</h4>
+                                    <div class="form-group"><label>接收邮箱</label><input v-model="emailConfig.to_email" class="form-input" placeholder="example@mail.com" /></div>
+                                </div>
+                                <div v-else-if="backupType==='webdav'">
+                                    <h4 class="form-title">☁️ WebDAV 备份</h4>
+                                    <div class="form-group"><label>WebDAV 地址</label><input v-model="webdavConfig.url" class="form-input" placeholder="https://dav.example.com" /></div>
+                                    <div class="form-group"><label>用户名</label><input v-model="webdavConfig.username" class="form-input" placeholder="username" /></div>
+                                    <div class="form-group"><label>密码</label><input v-model="webdavConfig.password" type="password" class="form-input" placeholder="password" /></div>
+                                </div>
+                                <div v-else-if="backupType==='s3'">
+                                    <h4 class="form-title">🗄️ S3 备份</h4>
+                                    <div class="form-group"><label>Endpoint URL</label><input v-model="s3Config.endpoint_url" class="form-input" placeholder="https://s3.example.com" /></div>
+                                    <div class="form-group"><label>Access Key</label><input v-model="s3Config.access_key" class="form-input" placeholder="AKIAXXXXXXXX" /></div>
+                                    <div class="form-group"><label>Secret Key</label><input v-model="s3Config.secret_key" type="text" class="form-input" placeholder="secret" /></div>
+                                    <div class="form-group"><label>Bucket</label><input v-model="s3Config.bucket" class="form-input" placeholder="mybucket" /></div>
+                                </div>
+                                <div v-if="backupMessage" :class="['message',{success:backupSuccess,error:!backupSuccess}]">
+                                    <span>{{backupSuccess?'✅':'❌'}}</span>
+                                    <span>{{backupMessage}}</span>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" @click="saveBackup"><span>保存配置</span></button>
+                                    <button class="btn btn-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);" @click="executeBackup"><span>🔄 执行备份</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="activeTab==='restore'">
+                            <div class="upload-card">
+                                <div class="upload-area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleDrop">
+                                    <input ref="fileInput" type="file" style="display:none;" @change="handleFileSelect" />
+                                    <div class="upload-icon">📁</div>
+                                    <div class="upload-text">点击或拖拽文件到此处</div>
+                                    <div class="upload-hint">支持任意文件格式</div>
+                                </div>
+                                <div v-if="selectedFile" class="file-info">
+                                    <div class="file-icon">📄</div>
+                                    <div class="file-details">
+                                        <div class="file-name">{{selectedFile.name}}</div>
+                                        <div class="file-size">{{formatSize(selectedFile.size)}}</div>
+                                    </div>
+                                    <button class="remove-btn" @click="clearFile">✕</button>
+                                </div>
+                                <div v-if="restoreMessage" :class="['message',{success:restoreSuccess,error:!restoreSuccess}]">
+                                    <span>{{restoreSuccess?'✅':'❌'}}</span>
+                                    <span>{{restoreMessage}}</span>
+                                </div>
+                                <div class="upload-progress" v-if="uploading">
+                                    <div class="progress-bar"><div class="progress-fill" :style="{width:progress+'%'}"></div></div>
+                                    <div class="progress-text">{{progress}}%</div>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" :disabled="!selectedFile||uploading" @click="uploadFile"><span>上传还原</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="activeTab==='settings'">
+                            <div class="settings-card">
+                                <h4 class="settings-title">🔐 密码设置</h4>
+                                <div class="form-group"><label>新密码</label><input v-model="newPassword" type="password" class="form-input" placeholder="请输入新密码" /></div>
+                                <div class="form-group"><label>确认密码</label><input v-model="confirmPassword" type="password" class="form-input" placeholder="请确认密码" /></div>
+                                <div v-if="settingsMessage" :class="['message',{success:settingsSuccess,error:!settingsSuccess}]">
+                                    <span>{{settingsSuccess?'✅':'❌'}}</span>
+                                    <span>{{settingsMessage}}</span>
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary" @click="setPassword"><span>设置密码</span></button>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <h5 class="info-title">ℹ️ 安全提示</h5>
+                                <ul class="info-list">
+                                    <li>设置密码后，每次访问页面都需要验证</li>
+                                    <li>请设置一个安全且容易记住的密码</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                authenticated: false,
+                showPasswordModal: false,
+                password: '',
+                passwordError: '',
+                activeTab: 'backup',
+                backupType: 'email',
+                backupTypes: [
+                    {value:'email', label:'邮件', icon:'📧'},
+                    {value:'webdav', label:'WebDAV', icon:'☁️'},
+                    {value:'s3', label:'S3', icon:'🗄️'}
+                ],
+                emailConfig: {to_email:''},
+                webdavConfig: {url:'', username:'', password:''},
+                s3Config: {endpoint_url:'', access_key:'', secret_key:'', bucket:''},
+                backupMessage: '',
+                backupSuccess: false,
+                selectedFile: null,
+                restoreMessage: '',
+                restoreSuccess: false,
+                uploading: false,
+                progress: 0,
+                newPassword: '',
+                confirmPassword: '',
+                settingsMessage: '',
+                settingsSuccess: false
+            },
+            mounted: function() {
+                this.checkHasPassword();
+                this.loadBackupConfig();
+            },
+            methods: {
+                checkHasPassword: function() {
+                    var self = this;
+                    axios.get('/api/has-password').then(function(res) {
+                        if(res.data.has_password) self.showPasswordModal = true;
+                        else self.authenticated = true;
+                    }).catch(function() {});
+                },
+                handlePasswordSubmit: function() {
+                    var self = this;
+                    if(!self.password.trim()) {self.passwordError = '密码不能为空'; return;}
+                    axios.post('/api/check-password', {password:self.password}).then(function(res) {
+                        if(res.data.code === 200) {self.passwordError = ''; self.password = ''; self.authenticated = true; self.showPasswordModal = false;}
+                        else {self.passwordError = res.data.message;}
+                    }).catch(function() {self.passwordError = '验证失败';});
+                },
+                loadBackupConfig: function() {
+                    var self = this;
+                    axios.get('/api/backup/config').then(function(res) {
+                        if(res.data.code === 200) {
+                            self.emailConfig = Object.assign({}, self.emailConfig, res.data.email);
+                            self.webdavConfig = Object.assign({}, self.webdavConfig, res.data.webdav);
+                            self.s3Config = Object.assign({}, self.s3Config, res.data.s3);
+                        }
+                    }).catch(function() {});
+                },
+                saveBackup: function() {
+                    var self = this;
+                    var params = {}, required = [];
+                    if(self.backupType === 'email') {required = ['to_email']; params = self.emailConfig;}
+                    else if(self.backupType === 'webdav') {required = ['url','username','password']; params = self.webdavConfig;}
+                    else if(self.backupType === 's3') {required = ['endpoint_url','access_key','secret_key','bucket']; params = self.s3Config;}
+                    var labels = {to_email:'接收邮箱', url:'WebDAV 地址', endpoint_url:'Endpoint URL', access_key:'Access Key', secret_key:'Secret Key', bucket:'Bucket'};
+                    for(var i=0; i<required.length; i++) {if(!params[required[i]]) return self.showBackupMessage(labels[required[i]] + ' 不能为空', false);}
+                    if(self.backupType === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(params.to_email)) {return self.showBackupMessage('请输入有效的邮箱地址', false);}
+                    if(self.backupType === 'webdav' && !/^https?:\/\/[^\s]+$/.test(params.url)) {return self.showBackupMessage('请输入有效的URL地址', false);}
+                    if(self.backupType === 's3' && !/^https?:\/\/[^\s]+$/.test(params.endpoint_url)) {return self.showBackupMessage('请输入有效的Endpoint URL', false);}
+                    axios.post('/api/backup', {type:self.backupType, params:params}).then(function(res) {self.showBackupMessage(res.data.message, res.data.code === 200);}).catch(function() {self.showBackupMessage('保存失败', false);});
+                },
+                showBackupMessage: function(msg, s) {var self = this; self.backupMessage = msg; self.backupSuccess = s; setTimeout(function(){self.backupMessage = '';}, 3000);},
+                executeBackup: function() {
+                    var self = this;
+                    var hasConfig = false;
+                    if(self.emailConfig.to_email) hasConfig = true;
+                    if(self.webdavConfig.url && self.webdavConfig.username && self.webdavConfig.password) hasConfig = true;
+                    if(self.s3Config.endpoint_url && self.s3Config.access_key && self.s3Config.secret_key && self.s3Config.bucket) hasConfig = true;
+                    if(!hasConfig) return self.showBackupMessage('请至少配置一个备份选项', false);
+                    axios.post('/api/backup/run').then(function(res) {self.showBackupMessage(res.data.message, res.data.code === 200);}).catch(function() {self.showBackupMessage('备份失败', false);});
+                },
+                triggerFileInput: function() {this.$refs.fileInput.click();},
+                handleFileSelect: function(e) {var f = e.target.files[0]; if(f) this.selectedFile = f;},
+                handleDrop: function(e) {var f = e.dataTransfer.files[0]; if(f) this.selectedFile = f;},
+                clearFile: function() {this.selectedFile = null; this.$refs.fileInput.value = '';},
+                formatSize: function(b) {if(b === 0) return '0 B'; var k = 1024, sizes = ['B','KB','MB','GB']; var i = Math.floor(Math.log(b)/Math.log(k)); return parseFloat((b/Math.pow(k,i)).toFixed(2)) + ' ' + sizes[i];},
+                uploadFile: function() {
+                    var self = this;
+                    if(!self.selectedFile) return;
+                    self.uploading = true; self.progress = 0; self.restoreMessage = '';
+                    var fd = new FormData(); fd.append('file', self.selectedFile);
+                    var iv = setInterval(function() {if(self.progress < 90) self.progress += Math.random() * 10;}, 200);
+                    axios.post('/api/restore', fd, {headers:{'Content-Type':'multipart/form-data'}}).then(function(res) {
+                        clearInterval(iv); self.progress = 100;
+                        setTimeout(function() {self.showRestoreMessage(res.data.message, res.data.code === 200); self.uploading = false; self.progress = 0; self.clearFile();}, 500);
+                    }).catch(function() {clearInterval(iv); self.uploading = false; self.progress = 0; self.showRestoreMessage('上传失败', false);});
+                },
+                showRestoreMessage: function(msg, s) {var self = this; self.restoreMessage = msg; self.restoreSuccess = s; setTimeout(function(){self.restoreMessage = '';}, 3000);},
+                setPassword: function() {
+                    var self = this;
+                    if(!self.newPassword) return self.showSettingsMessage('密码不能为空', false);
+                    if(self.newPassword !== self.confirmPassword) return self.showSettingsMessage('两次密码不一致', false);
+                    axios.post('/api/set-password', {password:self.newPassword}).then(function(res) {self.showSettingsMessage(res.data.message, res.data.code === 200); self.newPassword = ''; self.confirmPassword = '';}).catch(function() {self.showSettingsMessage('设置失败', false);});
+                },
+                showSettingsMessage: function(msg, s) {var self = this; self.settingsMessage = msg; self.settingsSuccess = s; setTimeout(function(){self.settingsMessage = '';}, 3000);}
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-项目与zeabur绑定，提交时会自动部署到zeabur
+基于 memos 项目，
+添加python环境 页面管理功能实现 备份还原功能
 
-github workflow 配置 
-要设置仓库的 secrets 与 vars 不要设置环境的 secrets 与 vars
+添加nginx 反向代理
+admin 指向 python的管理页面 实现备份还原
