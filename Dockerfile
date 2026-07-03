@@ -1,6 +1,10 @@
+
+
 FROM neosmemo/memos:0.25.1
 
-RUN apk update && apk add --no-cache \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache \
     nginx \
     curl \
     wget \
@@ -13,6 +17,8 @@ RUN apk update && apk add --no-cache \
     ncurses-dev \
     tk-dev \
     libffi-dev \
+    iproute2 \
+    findutils \
     xz-dev
 
 RUN wget https://www.python.org/ftp/python/3.14.0/Python-3.14.0.tgz && \
@@ -29,12 +35,17 @@ RUN ln -sf /usr/local/bin/python3.14 /usr/local/bin/python && \
 
 COPY ./src/ /app/src
 COPY ./nginx/yps.conf /etc/nginx/http.d/default.conf
-COPY ./start.sh /start.sh
-
+COPY ./entry.sh /entry.sh
 RUN pip install -r /app/src/requirements.txt
 
-RUN chmod +x /start.sh
+RUN chmod +x /entry.sh
 
 EXPOSE 80 3000 5230
 
-CMD ["/start.sh"]
+
+# 赋予执行权限
+RUN chmod +x /usr/local/memos/memos /entry.sh
+
+# 核心：ENTRYPOINT 执行脚本，CMD置空
+ENTRYPOINT ["/entry.sh"]
+CMD []
