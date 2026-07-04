@@ -70,7 +70,11 @@ class WebDAVClient:
 def uploadFile(local_file,remote_file,webdavConfig):
     print(f"------aList-----")
     client = WebDAVClient(webdavConfig)
-    remote_file_ = f"{webdavConfig['save_path']}/{remote_file}"
+    save_path = webdavConfig.get('save_path', '')
+    if save_path:
+        remote_file_ = f"{save_path}/{remote_file}" if not save_path.endswith('/') else f"{save_path}{remote_file}"
+    else:
+        remote_file_ = remote_file
     t=client.upload_file(local_file, remote_file_)
     if t:
         return remote_file_

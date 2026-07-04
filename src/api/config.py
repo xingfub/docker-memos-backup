@@ -46,8 +46,10 @@ def load_history(historyKey=None):
     return [] if historyKey else {}
 
 
-def save_history(historyKey,history):
-    historyAll = load_history()
-    historyAll[historyKey] = history
+def save_history(historyKey=None,history=None):
+    historyAll = history
+    if historyKey is not None :
+        historyAll = load_history()
+        historyAll[historyKey] = history
     with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
         json.dump(historyAll, f, indent=2)

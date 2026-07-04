@@ -16,12 +16,12 @@ class S3Client:
         """
         self.s3 = boto3.client(
             's3',
-            endpoint_url=f"{s3Config['endpoint_url']}",
-            aws_access_key_id=s3Config['access_key_id'],
-            aws_secret_access_key=s3Config['secret_access_key'],
+            endpoint_url=s3Config['endpoint_url'],
+            aws_access_key_id=s3Config['access_key'],
+            aws_secret_access_key=s3Config['secret_key'],
             region_name=s3Config['region_name']  # 根据实际区域调整
         )
-        self.Bucket_Name=s3Config['bucket_name']  # 替换为实际的桶名称
+        self.Bucket_Name=s3Config['bucket']
     
     def upload_file(self, local_path, remote_path):
         """
@@ -62,8 +62,8 @@ class S3Client:
         """
         try:
             # 删除文件
-            self.s3.delete_object(Bucket=Bucket_Name, Key=remote_path)
-            print(f"文件删除成功: s3://{Bucket_Name}/{remote_path}")
+            self.s3.delete_object(Bucket=self.Bucket_Name, Key=remote_path)
+            print(f"文件删除成功: s3://{self.Bucket_Name}/{remote_path}")
             return True
         except NoCredentialsError:
             print("S3凭证错误")
@@ -86,7 +86,11 @@ def uploadFile(local_file, remote_file,s3Config):
     """
     print(f"------s3-----")
     client = S3Client(s3Config)
-    remote_file_ = f"{s3Config['save_path']}/{remote_file}"
+    save_path = s3Config.get('save_path', '')
+    if save_path:
+        remote_file_ = f"{save_path}/{remote_file}" if not save_path.endswith('/') else f"{save_path}{remote_file}"
+    else:
+        remote_file_ = remote_file
     t=client.upload_file(local_file, remote_file_)
     return t
 

@@ -8,6 +8,7 @@ from flask import  jsonify, session
 from .config import load_config, save_config
 from .config import  check_password, set_password
 from .config import  has_password
+from .config import load_history, save_history
 from backup.index import restore_memos_db as restoreMemosDb
 from backup.loop import  main as backupMemosDb
 
@@ -63,29 +64,35 @@ def backup():
 
     config = load_config()
     if backup_type == 'email':
-        required = ['to_email']
-        for key in required:
-            if key not in params:
-                return jsonify({'code': 400, 'message': f'{key} 不能为空'})
-        if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', params['to_email']):
-            return jsonify({'code': 400, 'message': '请输入有效的邮箱地址'})
-        config['email'] = params
+        if params.get('to_email'):
+            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', params['to_email']):
+                return jsonify({'code': 400, 'message': '请输入有效的邮箱地址'})
+            config['email'] = params
+        elif any(params.values()):
+            return jsonify({'code': 400, 'message': '接收邮箱不能为空'})
+        else:
+            if 'email' in config:
+                del config['email']
     elif backup_type == 'webdav':
-        required = ['url', 'username', 'password']
-        for key in required:
-            if key not in params:
-                return jsonify({'code': 400, 'message': f'{key} 不能为空'})
-        if not re.match(r'^https?:\/\/[^\s]+$', params['url']):
-            return jsonify({'code': 400, 'message': '请输入有效的URL地址'})
-        config['webdav'] = params
+        if params.get('url') and params.get('username') and params.get('password'):
+            if not re.match(r'^https?:\/\/[^\s]+$', params['url']):
+                return jsonify({'code': 400, 'message': '请输入有效的URL地址'})
+            config['webdav'] = params
+        elif any(params.values()):
+            return jsonify({'code': 400, 'message': 'WebDAV地址、用户名和密码不能为空'})
+        else:
+            if 'webdav' in config:
+                del config['webdav']
     elif backup_type == 's3':
-        required = ['endpoint_url', 'access_key', 'secret_key', 'bucket']
-        for key in required:
-            if key not in params:
-                return jsonify({'code': 400, 'message': f'{key} 不能为空'})
-        if not re.match(r'^https?:\/\/[^\s]+$', params['endpoint_url']):
-            return jsonify({'code': 400, 'message': '请输入有效的Endpoint URL'})
-        config['s3'] = params
+        if params.get('endpoint_url') and params.get('access_key') and params.get('secret_key') and params.get('bucket'):
+            if not re.match(r'^https?:\/\/[^\s]+$', params['endpoint_url']):
+                return jsonify({'code': 400, 'message': '请输入有效的Endpoint URL'})
+            config['s3'] = params
+        elif any(params.values()):
+            return jsonify({'code': 400, 'message': 'Endpoint URL、Access Key、Secret Key和Bucket不能为空'})
+        else:
+            if 's3' in config:
+                del config['s3']
 
     save_config(config)
     type_labels = {'email': '邮件', 'webdav': 'WebDAV', 's3': 'S3'}
@@ -127,3 +134,41 @@ def restore():
     if restore_result:
         return jsonify({'code': 200, 'message': '恢复成功', 'filename': file.filename})
     return jsonify({'code': 400, 'message': '恢复失败'})
+
+
+@api_bp.route('/config/backup', methods=['GET'])
+def config_backup():
+    try:
+        config_dir = os.path.dirname(os.path.dirname(__file__))
+        config = load_config()
+        history = load_history()
+        backup_data = {
+            'config': config,
+            'history': history
+        }
+        return jsonify({'code': 200, 'data': backup_data})
+    except Exception as e:
+        return jsonify({'code': 500, 'message': str(e)})
+
+
+@api_bp.route('/config/restore', methods=['POST'])
+def config_restore():
+    if 'file' not in request.files:
+        return jsonify({'code': 400, 'message': '请选择文件'})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'code': 400, 'message': '请选择文件'})
+    if not file.filename.endswith('.json'):
+        return jsonify({'code': 400, 'message': '只支持 .json 文件'})
+    try:
+        backup_data = json.load(file)
+        if 'config' not in backup_data:
+            return jsonify({'code': 400, 'message': '备份文件格式错误'})
+        save_config(backup_data['config'])
+        if 'history' in backup_data:
+            save_history(history=backup_data['history'])
+        return jsonify({'code': 200, 'message': '配置还原成功'})
+    except json.JSONDecodeError:
+        return jsonify({'code': 400, 'message': 'JSON 文件格式错误'})
+    except Exception as e:
+        return jsonify({'code': 500, 'message': str(e)})
