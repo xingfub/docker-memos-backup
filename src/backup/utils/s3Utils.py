@@ -1,25 +1,27 @@
+# 添加当前目录到Python路径
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import boto3
 from botocore.exceptions import NoCredentialsError
 import os
-
-Access_Key="plp4i1d0"
-SecretKey="c84kql8qldjwmm4k"
-Internal="object-storage.objectstorage-system.svc.cluster.local"
-External="objectstorageapi.ap-southeast-1.clawcloudrun.com"
-Bucket_Name="plp4i1d0-xinfub"  # 替换为实际的桶名称
+from api.config import load_history as loadHistory, save_history as saveHistory
 
 class S3Client:
-    def __init__(self):
+    def __init__(self,s3Config):
         """
         初始化S3客户端
         """
         self.s3 = boto3.client(
             's3',
-            endpoint_url=f"https://{External}",
-            aws_access_key_id=Access_Key,
-            aws_secret_access_key=SecretKey,
-            region_name='ap-southeast-1'  # 根据实际区域调整
+            endpoint_url=f"{s3Config['endpoint_url']}",
+            aws_access_key_id=s3Config['access_key_id'],
+            aws_secret_access_key=s3Config['secret_access_key'],
+            region_name=s3Config['region_name']  # 根据实际区域调整
         )
+        self.Bucket_Name=s3Config['bucket_name']  # 替换为实际的桶名称
     
     def upload_file(self, local_path, remote_path):
         """
@@ -35,18 +37,18 @@ class S3Client:
         try:
             if not os.path.exists(local_path):
                 print(f"本地文件不存在: {local_path}")
-                return False
+                return False,"本地文件不存在"
             
             # 上传文件
-            self.s3.upload_file(local_path, Bucket_Name, remote_path)
-            print(f"文件上传成功: {local_path} -> s3://{Bucket_Name}/{remote_path}")
-            return True
+            self.s3.upload_file(local_path, self.Bucket_Name, remote_path)
+            print(f"文件上传成功: {local_path} -> s3://{self.Bucket_Name}/{remote_path}")
+            return True,remote_path
         except NoCredentialsError:
             print("S3凭证错误")
-            return False
+            return False,"S3凭证错误"
         except Exception as e:
             print(f"文件上传失败: {str(e)}")
-            return False
+            return False,str(e)
     
     def delete_file(self, remote_path):
         """
@@ -65,13 +67,13 @@ class S3Client:
             return True
         except NoCredentialsError:
             print("S3凭证错误")
-            return False
+            return False,"S3凭证错误"
         except Exception as e:
             print(f"文件删除失败: {str(e)}")
-            return False
+            return False,f"文件删除失败: {str(e)}"
 
 # 便捷函数
-def uploadFile(local_file, remote_file):
+def uploadFile(local_file, remote_file,s3Config):
     """
     上传文件到S3的便捷函数
     
@@ -83,28 +85,43 @@ def uploadFile(local_file, remote_file):
         str: 上传后的S3路径
     """
     print(f"------s3-----")
-    client = S3Client()
-    remote_file_ = f"imemos/sqlBackup/{remote_file}"
+    client = S3Client(s3Config)
+    remote_file_ = f"{s3Config['save_path']}/{remote_file}"
     t=client.upload_file(local_file, remote_file_)
-    if t:
-        return f"{remote_file_}"
-    else:
-        return None
+    return t
 
-def delFile(remote_file):
+def delFile(remote_file,s3Config):
     """
     从S3删除文件的便捷函数
     
     Args:
         remote_file (str): 远程文件路径
     """
-    client = S3Client()
+    client = S3Client(s3Config)
     client.delete_file(remote_file)
 
-if __name__ == "__main__":
-    # 测试上传文件
-    local_file = "main.py"
-    remote_file = "test.txt"
-    t=uploadFile(local_file, remote_file)
-    if t:
-        delFile(t)
+
+def main(localDbFile,remoteFileName,s3Config):
+    """
+    上传文件到WebDAV服务器,服务器的文件超过7天删除,返回是否执行成功
+    Args:
+        localDbFile (str): 本地文件路径
+        remoteFileName (str): 远程文件名
+    Returns:
+        bool: 上传成功返回True，失败返回False
+    """
+    historyKey="s3"
+    remote_file = uploadFile(localDbFile, remoteFileName,s3Config)
+    if not remote_file[0]:
+        return False
+    history = loadHistory(historyKey)
+    history.insert(0, remote_file[1])
+    new_files = history[:7]
+    saveHistory(historyKey,new_files)
+    old_files = history[7:]
+    # 删除超出7条的旧文件
+    for old_file in old_files:
+        if old_file:
+            delFile(old_file,s3Config)
+    return True
+        

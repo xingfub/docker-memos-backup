@@ -1,3 +1,7 @@
+import os
+import sys
+import time;
+from datetime import datetime
 #保存远程地址，每个保存5份超过的则删除
 import json
 import os
@@ -40,4 +44,10 @@ def writeKey(s3Key=None, alist=None,jianguo=None):
     writeConfig(config)
     return d1,d2,d3
 
-
+def getRemoteFileName(localDbFile):
+    now_=datetime.now()
+    time_ = now_.strftime('%Y%m%d-%H%M')
+    # 获取localDbFile的扩展名
+    _, ext = os.path.splitext(localDbFile)
+    ret_="{}{}".format(time_, ext)
+    return ret_

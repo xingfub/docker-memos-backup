@@ -36,13 +36,18 @@ def has_password():
     return 'password' in config and config['password']
 
 
-def load_history():
+def load_history(historyKey=None):
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return []
+            historyAll = json.load(f)
+            if historyKey is None:
+                return historyAll
+            return historyAll.get(historyKey, [])
+    return [] if historyKey else {}
 
 
-def save_history(history):
+def save_history(historyKey,history):
+    historyAll = load_history()
+    historyAll[historyKey] = history
     with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
-        json.dump(history, f, indent=2)
+        json.dump(historyAll, f, indent=2)

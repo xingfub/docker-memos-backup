@@ -1,17 +1,20 @@
 {
   "webdav": {
-    "url": "11",
+    "url": "https://aa.com",
     "username": "11",
-    "password": "11"
+    "password": "11",
+    "save_path": "111"
   },
   "s3": {
-    "endpoint_url": "11",
+    "endpoint_url": "https://aa.bb.com",
     "access_key": "111",
     "secret_key": "111",
-    "bucket": "111"
+    "bucket": "111",
+    "region_name": "12",
+    "save_path": "22"
   },
   "email": {
-    "to_email": "12"
+    "to_email": "12@aq.com"
   },
   "password": "11"
 }

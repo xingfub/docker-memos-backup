@@ -1,8 +1,13 @@
-from webdav3.client import Client
+# 添加当前目录到Python路径
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from webdav3.client import Client
+from api.config import load_history as loadHistory, save_history as saveHistory
 from datetime import datetime
 class WebDAVClient:
-    def __init__(self):
+    def __init__(self,webdavConfig):
         """
         初始化WebDAV客户端
         
@@ -12,10 +17,10 @@ class WebDAVClient:
             password (str): 密码
         """
         self.options = {
-            'webdav_hostname': 'https://a.xingfub.dpdns.org/dav/',
-            'webdav_login': "admin",
+            'webdav_hostname': webdavConfig['url'],
+            'webdav_login': webdavConfig['username'],
             'webdav_timeout':300,
-            'webdav_password': "ALISThu0303"
+            'webdav_password': webdavConfig['password']
         }
         self.client = Client(self.options)
         self.client.verify = False  # 忽略SSL验证（可选）
@@ -62,10 +67,10 @@ class WebDAVClient:
 
 
 
-def uploadFile(local_file,remote_file):
+def uploadFile(local_file,remote_file,webdavConfig):
     print(f"------aList-----")
-    client = WebDAVClient()
-    remote_file_ = f"/a/imemos/sqlBackup/{remote_file}"
+    client = WebDAVClient(webdavConfig)
+    remote_file_ = f"{webdavConfig['save_path']}/{remote_file}"
     t=client.upload_file(local_file, remote_file_)
     if t:
         return remote_file_
@@ -73,6 +78,32 @@ def uploadFile(local_file,remote_file):
         return None
         
 
-def delFile(remote_file):
-    client = WebDAVClient()
+def delFile(remote_file,webdavConfig):
+    client = WebDAVClient(webdavConfig)
     client.delete_file(remote_file)
+
+
+def main(localDbFile,remoteFileName,webdavConfig):
+    """
+    上传文件到WebDAV服务器,服务器的文件超过7天删除,返回是否执行成功
+    Args:
+        localDbFile (str): 本地文件路径
+        remoteFileName (str): 远程文件名
+    Returns:
+        bool: 上传成功返回True，失败返回False
+    """
+    remote_file = uploadFile(localDbFile, remoteFileName,webdavConfig)
+    if not remote_file:
+        return False
+    historyKey="webdav"
+    history = loadHistory(historyKey)
+    history.insert(0, remote_file)
+    new_files = history[:7]
+    saveHistory(historyKey,new_files)
+    old_files = history[7:]
+    # 删除超出7条的旧文件
+    for old_file in old_files:
+        if old_file:
+            delFile(old_file,webdavConfig)
+    return True
+        

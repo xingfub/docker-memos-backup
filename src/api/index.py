@@ -2,11 +2,16 @@ import os
 import json
 import time
 import re
-from flask import Blueprint, Config, request, jsonify, session
+from flask import Blueprint, Config, request
+from flask import  jsonify, session
 
 from .config import load_config, save_config
 from .config import  check_password, set_password
 from .config import  has_password
+from backup.index import restore_memos_db as restoreMemosDb
+from backup.loop import  main as backupMemosDb
+
+
 
 api_bp = Blueprint('api', __name__)
 
@@ -83,7 +88,8 @@ def backup():
         config['s3'] = params
 
     save_config(config)
-    return jsonify({'code': 200, 'message': f'{backup_type} 备份配置成功'})
+    type_labels = {'email': '邮件', 'webdav': 'WebDAV', 's3': 'S3'}
+    return jsonify({'code': 200, 'message': f'{type_labels.get(backup_type, backup_type)} 配置保存成功'})
 
 
 @api_bp.route('/backup/config', methods=['GET'])
@@ -99,31 +105,8 @@ def get_backup_config():
 
 @api_bp.route('/backup/run', methods=['POST'])
 def run_backup():
-    config = load_config()
-
-    has_email = 'email' in config and config['email'].get('to_email')
-    has_webdav = 'webdav' in config and all(k in config['webdav'] for k in ['url', 'username', 'password'])
-    has_s3 = 's3' in config and all(k in config['s3'] for k in ['endpoint_url', 'access_key', 'secret_key', 'bucket'])
-
-    if not has_email and not has_webdav and not has_s3:
-        return jsonify({'code': 400, 'message': '请至少配置一个备份选项'})
-
-    backup_record = {
-        'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
-        'status': 'success',
-        'types': []
-    }
-
-    if has_email:
-        backup_record['types'].append('email')
-    if has_webdav:
-        backup_record['types'].append('webdav')
-    if has_s3:
-        backup_record['types'].append('s3')
-
-    
-
-    return jsonify({'code': 200, 'message': f'备份成功，已备份到: {", ".join(backup_record["types"])}'})
+   backup_result=backupMemosDb()
+   return jsonify({'code': 200 if backup_result[0] else 400, 'message': backup_result[1]})
 
 
 @api_bp.route('/restore', methods=['POST'])
@@ -140,5 +123,7 @@ def restore():
 
     file_path = os.path.join(upload_dir, file.filename)
     file.save(file_path)
-
-    return jsonify({'code': 200, 'message': '文件上传成功', 'filename': file.filename})
+    restore_result = restoreMemosDb(file_path)
+    if restore_result:
+        return jsonify({'code': 200, 'message': '恢复成功', 'filename': file.filename})
+    return jsonify({'code': 400, 'message': '恢复失败'})

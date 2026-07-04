@@ -40,7 +40,7 @@ def run_loop():
             print("Loop running...")
         except Exception as e:
             print(f"Loop error: {e}")
-        time.sleep(60)
+        time.sleep(24*60*60)
 
 
 if __name__ == "__main__":
