@@ -20,6 +20,12 @@ def uploadFile(localDbFile):
         return (False, '备份配置文件不存在')
     remoteFileName=getRemoteFileName(localDbFile)
     result=[]
+    if "email"  in config and "to_email"  in config['email'] and config['email']['to_email']:
+        emailKey=uploadFileMail(localDbFile,remoteFileName,config['email'])
+        result.append((emailKey,"email备份成功" if emailKey else "email备份失败"))
+    else:
+        result.append ((False, 'Email配置文件不存在email配置')) 
+
     if "s3"  in config and "endpoint_url"  in config['s3'] and config['s3']['endpoint_url']:
         s3Key=uploadFileS3(localDbFile,remoteFileName,config['s3'])
         result.append((s3Key,"s3备份成功" if s3Key else "s3备份失败"))
@@ -32,11 +38,6 @@ def uploadFile(localDbFile):
     else:
         result.append ((False, 'webdav配置文件不存在webdav配置'))
 
-    if "email"  in config and "to_email"  in config['email'] and config['email']['to_email']:
-        emailKey=uploadFileMail(localDbFile,remoteFileName,config['email'])
-        result.append((emailKey,"email备份成功" if emailKey else "email备份失败"))
-    else:
-        result.append ((False, 'Email配置文件不存在email配置')) 
     return result
 
 def main2(backupDbFile):

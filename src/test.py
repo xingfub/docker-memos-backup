@@ -6,4 +6,4 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from backup.loop import main2 as backupMain2
 
-backupMain2((True,"main.py"))
+backupMain2((True,"../local/memos_prod.db"))
