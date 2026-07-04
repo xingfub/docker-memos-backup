@@ -22,19 +22,19 @@ def uploadFile(localDbFile):
     result=[]
     if "s3"  in config and "endpoint_url"  in config['s3'] and config['s3']['endpoint_url']:
         s3Key=uploadFileS3(localDbFile,remoteFileName,config['s3'])
-        result.append((s3Key,s3Key,"s3备份成功" if s3Key else "s3备份失败"))
+        result.append((s3Key,"s3备份成功" if s3Key else "s3备份失败"))
     else:
         result.append ((False, 'S3配置文件不存在s3配置'))
 
     if "webdav"  in config and "url"  in config['webdav'] and config['webdav']['url']:
         webdavKey=uploadFileWebdav(localDbFile,remoteFileName,config['webdav'])
-        result.append((webdavKey,webdavKey,"webdav备份成功" if webdavKey else "webdav备份失败"))
+        result.append((webdavKey,"webdav备份成功" if webdavKey else "webdav备份失败"))
     else:
         result.append ((False, 'webdav配置文件不存在webdav配置'))
 
     if "email"  in config and "to_email"  in config['email'] and config['email']['to_email']:
         emailKey=uploadFileMail(localDbFile,remoteFileName,config['email'])
-        result.append((emailKey,emailKey,"email备份成功" if emailKey else "email备份失败"))
+        result.append((emailKey,"email备份成功" if emailKey else "email备份失败"))
     else:
         result.append ((False, 'Email配置文件不存在email配置')) 
     return result
