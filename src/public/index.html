@@ -630,6 +630,7 @@
         </div>
     </div>
     <script>
+        axios.defaults.baseURL = window.location.pathname.includes('/admin') ? '/admin/api' : '/api';
         new Vue({
             el: '#app',
             data: {
@@ -666,7 +667,7 @@
             methods: {
                 checkHasPassword: function () {
                     var self = this;
-                    axios.get('/api/has-password').then(function (res) {
+                    axios.get('/has-password').then(function (res) {
                         if (res.data.has_password) self.showPasswordModal = true;
                         else self.authenticated = true;
                     }).catch(function () { });
@@ -674,14 +675,14 @@
                 handlePasswordSubmit: function () {
                     var self = this;
                     if (!self.password.trim()) { self.passwordError = '密码不能为空'; return; }
-                    axios.post('/api/check-password', { password: self.password }).then(function (res) {
+                    axios.post('/check-password', { password: self.password }).then(function (res) {
                         if (res.data.code === 200) { self.passwordError = ''; self.password = ''; self.authenticated = true; self.showPasswordModal = false; }
                         else { self.passwordError = res.data.message; }
                     }).catch(function () { self.passwordError = '验证失败'; });
                 },
                 loadBackupConfig: function () {
                     var self = this;
-                    axios.get('/api/backup/config').then(function (res) {
+                    axios.get('/backup/config').then(function (res) {
                         if (res.data.code === 200) {
                             self.emailConfig = Object.assign({}, self.emailConfig, res.data.email);
                             self.webdavConfig = Object.assign({}, self.webdavConfig, res.data.webdav);
@@ -700,7 +701,7 @@
                     if (self.backupType === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(params.to_email)) { return self.showBackupMessage('请输入有效的邮箱地址', false); }
                     if (self.backupType === 'webdav' && !/^https?:\/\/[^\s]+$/.test(params.url)) { return self.showBackupMessage('请输入有效的URL地址', false); }
                     if (self.backupType === 's3' && !/^https?:\/\/[^\s]+$/.test(params.endpoint_url)) { return self.showBackupMessage('请输入有效的Endpoint URL', false); }
-                    axios.post('/api/backup', { type: self.backupType, params: params }).then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('保存失败', false); });
+                    axios.post('/backup', { type: self.backupType, params: params }).then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('保存失败', false); });
                 },
                 showBackupMessage: function (msg, s) { var self = this; self.backupMessage = msg; self.backupSuccess = s; setTimeout(function () { self.backupMessage = ''; }, 3000); },
                 executeBackup: function () {
@@ -710,7 +711,7 @@
                     if (self.webdavConfig.url && self.webdavConfig.username && self.webdavConfig.password) hasConfig = true;
                     if (self.s3Config.endpoint_url && self.s3Config.access_key && self.s3Config.secret_key && self.s3Config.bucket) hasConfig = true;
                     if (!hasConfig) return self.showBackupMessage('请至少配置一个备份选项', false);
-                    axios.post('/api/backup/run').then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('备份失败', false); });
+                    axios.post('/backup/run').then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('备份失败', false); });
                 },
                 triggerFileInput: function () { this.$refs.fileInput.click(); },
                 handleFileSelect: function (e) { var f = e.target.files[0]; if (f) this.selectedFile = f; },
@@ -723,7 +724,7 @@
                     self.uploading = true; self.progress = 0; self.restoreMessage = '';
                     var fd = new FormData(); fd.append('file', self.selectedFile);
                     var iv = setInterval(function () { if (self.progress < 90) self.progress += Math.random() * 10; }, 200);
-                    axios.post('/api/restore', fd, { headers: { 'Content-Type': 'multipart/form-data' } }).then(function (res) {
+                    axios.post('/restore', fd, { headers: { 'Content-Type': 'multipart/form-data' } }).then(function (res) {
                         clearInterval(iv); self.progress = 100;
                         setTimeout(function () { self.showRestoreMessage(res.data.message, res.data.code === 200); self.uploading = false; self.progress = 0; self.clearFile(); }, 500);
                     }).catch(function () { clearInterval(iv); self.uploading = false; self.progress = 0; self.showRestoreMessage('上传失败', false); });
@@ -733,7 +734,7 @@
                     var self = this;
                     if (!self.newPassword) return self.showSettingsMessage('密码不能为空', false);
                     if (self.newPassword !== self.confirmPassword) return self.showSettingsMessage('两次密码不一致', false);
-                    axios.post('/api/set-password', { password: self.newPassword }).then(function (res) { self.showSettingsMessage(res.data.message, res.data.code === 200); self.newPassword = ''; self.confirmPassword = ''; }).catch(function () { self.showSettingsMessage('设置失败', false); });
+                    axios.post('/set-password', { password: self.newPassword }).then(function (res) { self.showSettingsMessage(res.data.message, res.data.code === 200); self.newPassword = ''; self.confirmPassword = ''; }).catch(function () { self.showSettingsMessage('设置失败', false); });
                 },
                 showSettingsMessage: function (msg, s) { var self = this; self.settingsMessage = msg; self.settingsSuccess = s; setTimeout(function () { self.settingsMessage = ''; }, 3000); }
             }
