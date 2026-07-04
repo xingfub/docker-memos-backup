@@ -131,9 +131,9 @@ def restore():
     file_path = os.path.join(upload_dir, file.filename)
     file.save(file_path)
     restore_result = restoreMemosDb(file_path)
-    if restore_result:
-        return jsonify({'code': 200, 'message': '恢复成功', 'filename': file.filename})
-    return jsonify({'code': 400, 'message': '恢复失败'})
+    if restore_result[0]:
+        return jsonify({'code': 200, 'message': restore_result[1], 'filename': file.filename})
+    return jsonify({'code': 400, 'message': restore_result[1]})
 
 
 @api_bp.route('/config/backup', methods=['GET'])

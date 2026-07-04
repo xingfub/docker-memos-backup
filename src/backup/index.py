@@ -48,18 +48,18 @@ def restore_memos_db(src_db):
         dst_db = '/var/opt/memos/memos_prod.db'
         if not os.path.exists(src_db):
             print(f'备份数据库文件不存在: {src_db}')
-            return False
+            return False,f'备份数据库文件不存在: {src_db}'
         if not kill_memos():
-            return False
+            return False,'memos 进程终止失败'
         shutil.copy2(src_db, dst_db)
         print(f'备份数据库已恢复到: {dst_db}')
         start_memos()
         print('memos 数据库恢复完成')
-        return True
+        return True,'恢复成功'
     except Exception as e:
         print(f'恢复数据库出错: {e}')
         start_memos()
-        return False
+        return False,f'恢复数据库出错: {e}'
 
 def backup_memos_db():
     """备份 memos 数据库：终止进程 -> 复制数据库 -> 重启进程"""

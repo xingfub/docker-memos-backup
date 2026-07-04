@@ -85,14 +85,18 @@ def uploadFile(local_file, remote_file,s3Config):
         str: 上传后的S3路径
     """
     print(f"------s3-----")
-    client = S3Client(s3Config)
-    save_path = s3Config.get('save_path', '')
-    if save_path:
-        remote_file_ = f"{save_path}/{remote_file}" if not save_path.endswith('/') else f"{save_path}{remote_file}"
-    else:
-        remote_file_ = remote_file
-    t=client.upload_file(local_file, remote_file_)
-    return t
+    try:
+        client = S3Client(s3Config)
+        save_path = s3Config.get('save_path', '')
+        if save_path:
+            remote_file_ = f"{save_path}/{remote_file}" if not save_path.endswith('/') else f"{save_path}{remote_file}"
+        else:
+            remote_file_ = remote_file
+        t=client.upload_file(local_file, remote_file_)
+        return t,remote_file_
+    except Exception as e:
+        print(f'上传数据库出错: {e}')
+        return False,f'上传数据库出错: {e}'
 
 def delFile(remote_file,s3Config):
     """
@@ -114,18 +118,22 @@ def main(localDbFile,remoteFileName,s3Config):
     Returns:
         bool: 上传成功返回True，失败返回False
     """
-    historyKey="s3"
-    remote_file = uploadFile(localDbFile, remoteFileName,s3Config)
-    if not remote_file[0]:
-        return False
-    history = loadHistory(historyKey)
-    history.insert(0, remote_file[1])
-    new_files = history[:7]
-    saveHistory(historyKey,new_files)
-    old_files = history[7:]
-    # 删除超出7条的旧文件
-    for old_file in old_files:
-        if old_file:
-            delFile(old_file,s3Config)
-    return True
+    try:
+        historyKey="s3"
+        remote_file = uploadFile(localDbFile, remoteFileName,s3Config)
+        if not remote_file[0]:
+            return False,"s3上传失败"
+        history = loadHistory(historyKey)
+        history.insert(0, remote_file[1])
+        new_files = history[:7]
+        saveHistory(historyKey,new_files)
+        old_files = history[7:]
+        # 删除超出7条的旧文件
+        for old_file in old_files:
+            if old_file:
+                delFile(old_file,s3Config)
+        return True,remote_file[1]
+    except Exception as e:
+        print(f'上传数据库出错: {e}')
+        return False,f'上传数据库出错: {e}'
         

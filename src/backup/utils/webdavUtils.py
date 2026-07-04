@@ -96,18 +96,21 @@ def main(localDbFile,remoteFileName,webdavConfig):
     Returns:
         bool: 上传成功返回True，失败返回False
     """
-    remote_file = uploadFile(localDbFile, remoteFileName,webdavConfig)
-    if not remote_file:
-        return False
-    historyKey="webdav"
-    history = loadHistory(historyKey)
-    history.insert(0, remote_file)
-    new_files = history[:7]
-    saveHistory(historyKey,new_files)
-    old_files = history[7:]
-    # 删除超出7条的旧文件
-    for old_file in old_files:
-        if old_file:
-            delFile(old_file,webdavConfig)
-    return True
-        
+    try:
+        remote_file = uploadFile(localDbFile, remoteFileName,webdavConfig)
+        if not remote_file:
+            return False,"webdav上传失败"
+        historyKey="webdav"
+        history = loadHistory(historyKey)
+        history.insert(0, remote_file)
+        new_files = history[:7]
+        saveHistory(historyKey,new_files)
+        old_files = history[7:]
+        # 删除超出7条的旧文件
+        for old_file in old_files:
+            if old_file:
+                delFile(old_file,webdavConfig)
+        return True,"webdav上传成功"
+    except Exception as e:
+        print(f'上传数据库出错: {e}')
+        return False,f'上传数据库出错: {e}'
