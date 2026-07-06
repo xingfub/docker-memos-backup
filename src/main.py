@@ -38,9 +38,14 @@ def run_loop():
     while True:
         try:
             print("Loop running...")
+            from backup.loop import main as backupMain
+            backupMain()
         except Exception as e:
             print(f"Loop error: {e}")
-        time.sleep(24*60*60)
+        from api.config import load_config as loadConfig
+        config=loadConfig()
+        backupInterval = config.get('auto_backup_interval', 24)
+        time.sleep(backupInterval*60*60)
 
 
 if __name__ == "__main__":

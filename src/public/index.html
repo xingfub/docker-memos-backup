@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker Memos 服务</title>
+    <title>DMemos备份管理</title>
     <script src="https://unpkg.com/vue@2.7.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@1.6.0/dist/axios.min.js"></script>
     <style>
@@ -531,13 +531,15 @@
                                 class="nav-icon">🔄</span><span>数据还原</span></div>
                     </li>
                     <li class="nav-item">
+                        <div :class="['nav-link', {active:activeTab==='auto_backup'}]" @click="activeTab='auto_backup'">
+                            <span class="nav-icon">⏰</span><span>自动备份</span>
+                        </div>
+                    </li>
+                    <li class="nav-item">
                         <div :class="['nav-link', {active:activeTab==='settings'}]" @click="activeTab='settings'"><span
                                 class="nav-icon">⚙️</span><span>设置</span></div>
                     </li>
-                    <li class="nav-item">
-                        <div :class="['nav-link', {active:activeTab==='config'}]" @click="activeTab='config'"><span
-                                class="nav-icon">📁</span><span>配置备份</span></div>
-                    </li>
+
                 </ul>
             </aside>
             <main class="main-content">
@@ -594,12 +596,6 @@
                                 </div>
                                 <div class="form-actions">
                                     <button class="btn btn-primary" @click="saveBackup"><span>保存配置</span></button>
-                                    <button class="btn btn-primary"
-                                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"
-                                        :disabled="backupLoading" @click="executeBackup">
-                                        <span v-if="backupLoading" class="spinner">⏳</span>
-                                        <span>{{backupLoading?'备份中...':'🔄 执行备份'}}</span>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -654,16 +650,7 @@
                                     <button class="btn btn-primary" @click="setPassword"><span>设置密码</span></button>
                                 </div>
                             </div>
-                            <div class="info-card">
-                                <h5 class="info-title">ℹ️ 安全提示</h5>
-                                <ul class="info-list">
-                                    <li>设置密码后，每次访问页面都需要验证</li>
-                                    <li>请设置一个安全且容易记住的密码</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div v-if="activeTab==='config'">
-                            <div class="settings-card">
+                            <div class="settings-card" style="margin-top: 20px;">
                                 <h4 class="settings-title">📁 配置文件备份</h4>
                                 <div class="form-actions">
                                     <button class="btn btn-primary" @click="backupConfig"><span>下载配置文件</span></button>
@@ -695,6 +682,51 @@
                                     <span>{{configSuccess?'✅':'❌'}}</span>
                                     <span>{{configMessage}}</span>
                                 </div>
+                            </div>
+                            <div class="info-card">
+                                <h5 class="info-title">ℹ️ 安全提示</h5>
+                                <ul class="info-list">
+                                    <li>设置密码后，每次访问页面都需要验证</li>
+                                    <li>请设置一个安全且容易记住的密码</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div v-if="activeTab==='auto_backup'">
+                            <div class="form-card">
+                                <h4 class="form-title">⏰ 自动备份设置</h4>
+                                <div class="form-group">
+                                    <label>自动备份间隔时长（小时）</label>
+                                    <input v-model="autoBackupInterval" type="number" min="1" class="form-input"
+                                        placeholder="请输入备份间隔时长，小于等于0则按24小时" />
+                                </div>
+                                <div class="form-actions">
+                                    <button class="btn btn-primary"
+                                        @click="saveAutoBackupConfig"><span>保存设置</span></button>
+                                    <button class="btn btn-primary"
+                                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"
+                                        :disabled="backupLoading" @click="executeBackup">
+                                        <span v-if="backupLoading" class="spinner">⏳</span>
+                                        <span>{{backupLoading?'备份中...':'🔄 执行备份'}}</span>
+                                    </button>
+                                </div>
+                                <div v-if="autoBackupMessage"
+                                    :class="['message',{success:autoBackupSuccess,error:!autoBackupSuccess}]">
+                                    <span>{{autoBackupSuccess?'✅':'❌'}}</span>
+                                    <span>{{autoBackupMessage}}</span>
+                                </div>
+                                <div v-if="backupMessage"
+                                    :class="['message',{success:backupSuccess,error:!backupSuccess}]">
+                                    <span>{{backupSuccess?'✅':'❌'}}</span>
+                                    <span>{{backupMessage}}</span>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <h5 class="info-title">ℹ️ 说明</h5>
+                                <ul class="info-list">
+                                    <li>自动备份将按照设置的间隔时长执行数据备份</li>
+                                    <li>输入小于等于0的值将默认设置为24小时</li>
+                                    <li>需要先配置至少一个备份选项（邮件/WebDAV/S3）</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -735,7 +767,18 @@
                 configFile: null,
                 configMessage: '',
                 configSuccess: false,
-                backupLoading: false
+                backupLoading: false,
+                autoBackupInterval: 24,
+                autoBackupMessage: '',
+                autoBackupSuccess: false
+            },
+            watch: {
+                activeTab: function () {
+                    this.backupMessage = '';
+                    this.backupSuccess = false;
+                    this.autoBackupMessage = '';
+                    this.autoBackupSuccess = false;
+                }
             },
             mounted: function () {
                 this.checkHasPassword();
@@ -764,6 +807,7 @@
                             self.emailConfig = Object.assign({}, self.emailConfig, res.data.email);
                             self.webdavConfig = Object.assign({}, self.webdavConfig, res.data.webdav);
                             self.s3Config = Object.assign({}, self.s3Config, res.data.s3);
+                            self.autoBackupInterval = res.data.auto_backup_interval;
                         }
                     }).catch(function () { });
                 },
@@ -849,7 +893,17 @@
                         if (res.data.code === 200) { self.clearConfigFile(); self.loadBackupConfig(); }
                     }).catch(function () { self.showConfigMessage('还原失败', false); });
                 },
-                showConfigMessage: function (msg, s) { var self = this; self.configMessage = msg; self.configSuccess = s; if (s) setTimeout(function () { self.configMessage = ''; }, 3000); }
+                showConfigMessage: function (msg, s) { var self = this; self.configMessage = msg; self.configSuccess = s; if (s) setTimeout(function () { self.configMessage = ''; }, 3000); },
+                saveAutoBackupConfig: function () {
+                    var self = this;
+                    var interval = parseInt(self.autoBackupInterval) || 0;
+                    if (interval <= 0) interval = 24;
+                    axios.post('/auto-backup/config', { interval: interval }).then(function (res) {
+                        self.showAutoBackupMessage(res.data.message, res.data.code === 200);
+                        self.autoBackupInterval = interval;
+                    }).catch(function () { self.showAutoBackupMessage('保存失败', false); });
+                },
+                showAutoBackupMessage: function (msg, s) { var self = this; self.autoBackupMessage = msg; self.autoBackupSuccess = s; if (s) setTimeout(function () { self.autoBackupMessage = ''; }, 3000); }
             }
         });
     </script>

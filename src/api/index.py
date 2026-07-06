@@ -106,7 +106,8 @@ def get_backup_config():
         'code': 200,
         'email': config.get('email', {}),
         'webdav': config.get('webdav', {}),
-        's3': config.get('s3', {})
+        's3': config.get('s3', {}),
+        'auto_backup_interval': config.get('auto_backup_interval', 24)
     })
 
 
@@ -172,3 +173,19 @@ def config_restore():
         return jsonify({'code': 400, 'message': 'JSON 文件格式错误'})
     except Exception as e:
         return jsonify({'code': 500, 'message': str(e)})
+
+
+@api_bp.route('/auto-backup/config', methods=['POST'])
+def auto_backup_config():
+    data = request.get_json()
+    interval = data.get('interval', 24)
+    try:
+        interval = int(interval)
+        if interval <= 0:
+            interval = 24
+    except (ValueError, TypeError):
+        interval = 24
+    config = load_config()
+    config['auto_backup_interval'] = interval
+    save_config(config)
+    return jsonify({'code': 200, 'message': f'自动备份间隔已设置为 {interval} 小时'})
