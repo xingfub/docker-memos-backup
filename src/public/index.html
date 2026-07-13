@@ -646,6 +646,13 @@
                                     <span>{{settingsSuccess?'✅':'❌'}}</span>
                                     <span>{{settingsMessage}}</span>
                                 </div>
+                                <div class="info-card">
+                                    <h5 class="info-title">ℹ️ 安全提示</h5>
+                                    <ul class="info-list">
+                                        <li>设置密码后，每次访问页面都需要验证</li>
+                                        <li>请设置一个安全且容易记住的密码</li>
+                                    </ul>
+                                </div>
                                 <div class="form-actions">
                                     <button class="btn btn-primary" @click="setPassword"><span>设置密码</span></button>
                                 </div>
@@ -683,13 +690,7 @@
                                     <span>{{configMessage}}</span>
                                 </div>
                             </div>
-                            <div class="info-card">
-                                <h5 class="info-title">ℹ️ 安全提示</h5>
-                                <ul class="info-list">
-                                    <li>设置密码后，每次访问页面都需要验证</li>
-                                    <li>请设置一个安全且容易记住的密码</li>
-                                </ul>
-                            </div>
+
                         </div>
                         <div v-if="activeTab==='auto_backup'">
                             <div class="form-card">
@@ -707,6 +708,12 @@
                                         :disabled="backupLoading" @click="executeBackup">
                                         <span v-if="backupLoading" class="spinner">⏳</span>
                                         <span>{{backupLoading?'备份中...':'🔄 执行备份'}}</span>
+                                    </button>
+                                    <button class="btn btn-primary"
+                                        style="background: linear-gradient(135deg, #d709c2 0%, #e73ea7 100%);"
+                                        @click="downloadBackup">
+                                        <span v-if="backupLoading" class="spinner">⏳</span>
+                                        <span>{{'下载备份文件'}}</span>
                                     </button>
                                 </div>
                                 <div v-if="autoBackupMessage"
@@ -838,6 +845,9 @@
                     if (!hasConfig) return self.showBackupMessage('请至少配置一个备份选项', false);
                     self.backupLoading = true;
                     axios.post('/backup/run').then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('备份失败', false); }).finally(function () { self.backupLoading = false; });
+                },
+                downloadBackup: function () {
+                    window.open('/api/backup/download');
                 },
                 triggerFileInput: function () { this.$refs.fileInput.click(); },
                 handleFileSelect: function (e) { var f = e.target.files[0]; if (f) this.selectedFile = f; },

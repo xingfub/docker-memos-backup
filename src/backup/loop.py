@@ -46,12 +46,12 @@ def main2(backupDbFile):
     db_file_=  backupDbFile[1]
     result=uploadFile(db_file_)
     print(result)
-    success=True
+    success=False
     msg=""
     for item in result:
         msg+=f"{item[1]},"
-        if not item[0]:
-            success=False
+        if  item[0]:
+            success=True
     return (success, msg)
 
 def main():

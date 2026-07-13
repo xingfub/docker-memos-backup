@@ -2,7 +2,7 @@ import os
 import json
 import time
 import re
-from flask import Blueprint, Config, request
+from flask import Blueprint, Config, request, send_file
 from flask import  jsonify, session
 
 from .config import load_config, save_config
@@ -10,6 +10,7 @@ from .config import  check_password, set_password
 from .config import  has_password
 from .config import load_history, save_history
 from backup.index import restore_memos_db as restoreMemosDb
+from backup.loop import backupMemosDb as downloadBackupMemosDb
 from backup.loop import  main as backupMemosDb
 
 
@@ -116,6 +117,14 @@ def run_backup():
    backup_result=backupMemosDb()
    return jsonify({'code': 200 if backup_result[0] else 400, 'message': backup_result[1]})
 
+@api_bp.route('/backup/download', methods=['GET'])
+def download_backup():
+   backup_result=downloadBackupMemosDb()
+   if backup_result[0]:
+       file_path = backup_result[1]
+       filename = os.path.basename(file_path)
+       return send_file(file_path, as_attachment=True, download_name=filename)
+   return jsonify({'code': 400, 'message': backup_result[1]})
 
 @api_bp.route('/restore', methods=['POST'])
 def restore():
