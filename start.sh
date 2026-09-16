@@ -3,6 +3,10 @@
 IMAGE_NAME="xingfub/memos:0.25.1"
 CONTAINER_NAME="memos-admin-container-stable"
 
+# 删除镜像，构建镜像
+# docker rmi "$IMAGE_NAME"
+# docker build -t "$IMAGE_NAME" .
+
 # 获取脚本的绝对路径
 script_path=$(readlink -f "$0")
 # 获取脚本所在的目录

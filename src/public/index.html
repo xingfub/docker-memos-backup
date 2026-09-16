@@ -712,7 +712,6 @@
                                     <button class="btn btn-primary"
                                         style="background: linear-gradient(135deg, #d709c2 0%, #e73ea7 100%);"
                                         @click="downloadBackup">
-                                        <span v-if="backupLoading" class="spinner">⏳</span>
                                         <span>{{'下载备份文件'}}</span>
                                     </button>
                                 </div>
@@ -847,7 +846,7 @@
                     axios.post('/backup/run').then(function (res) { self.showBackupMessage(res.data.message, res.data.code === 200); }).catch(function () { self.showBackupMessage('备份失败', false); }).finally(function () { self.backupLoading = false; });
                 },
                 downloadBackup: function () {
-                    window.open('/api/backup/download');
+                    window.open(`${axios.defaults.baseURL}/backup/download`);
                 },
                 triggerFileInput: function () { this.$refs.fileInput.click(); },
                 handleFileSelect: function (e) { var f = e.target.files[0]; if (f) this.selectedFile = f; },

@@ -49,7 +49,7 @@ def main2(backupDbFile):
     success=False
     msg=""
     for item in result:
-        msg+=f"{item[1]},"
+        msg+=f"{item[1]},\n"
         if  item[0]:
             success=True
     return (success, msg)
