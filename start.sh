@@ -4,8 +4,8 @@ IMAGE_NAME="xingfub/memos:0.25.1"
 CONTAINER_NAME="memos-admin-container-stable"
 
 # 删除镜像，构建镜像
-# docker rmi "$IMAGE_NAME"
-# docker build -t "$IMAGE_NAME" .
+# sudo docker rmi "$IMAGE_NAME"
+# sudo docker build -t "$IMAGE_NAME" .
 
 # 获取脚本的绝对路径
 script_path=$(readlink -f "$0")
@@ -17,7 +17,7 @@ docker stop "$CONTAINER_NAME" 2>/dev/null || true
 docker rm "$CONTAINER_NAME" 2>/dev/null || true
 
 echo "Starting container..."
-docker run -d \
+sudo docker run -d \
     --name "$CONTAINER_NAME" \
     --restart unless-stopped \
     -v $script_dir/.memos/:/var/opt/memos \
