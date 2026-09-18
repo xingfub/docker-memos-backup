@@ -5,3 +5,4 @@ src/**/__pycache__
 src/history.json
 src/config.json
 src/uploads/*
+.memos/

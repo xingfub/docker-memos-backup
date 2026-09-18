@@ -30,18 +30,44 @@ class WebDAVClient:
             if not os.path.exists(local_path):
                 print(f"本地文件不存在: {local_path}")
                 return False
-             # 确保远程目录存在
-            remote_dir = os.path.dirname(remote_path)
-            if remote_dir and not self.client.check(remote_dir):
-                self.client.mkdir(remote_dir)    
-            print(f"确保远程目录存在: {remote_dir}")    
-            # 上传文件
-            self.client.upload_sync(remote_path=remote_path, local_path=local_path)
+            # 确保远程目录存在（递归逐层创建，不依赖 check——坚果云 HEAD 响应不可靠）
+            remote_dir = os.path.dirname(remote_path).replace("\\", "/")
+            if remote_dir:
+                dirs = remote_dir.strip("/").split("/")
+                cur = ""
+                for d in dirs:
+                    cur = f"{cur}/{d}" if cur else d
+                    try:
+                        self.client.mkdir(cur)
+                    except Exception:
+                        pass  # 目录已存在则忽略
+            print(f"确保远程目录存在: {remote_dir}")
+            # 坚果云对 HEAD 请求响应不可靠，webdav3 上传前会 check 父目录，
+            # 即使目录存在也会误判不存在 → 临时让 check 返回 True 绕过
+            original_check = self.client.check
+            self.client.check = lambda path: True
+            try:
+                self.client.upload_sync(remote_path=remote_path, local_path=local_path)
+            finally:
+                self.client.check = original_check
             print(f"文件上传成功: {local_path} -> {remote_path}")
             return True
         except Exception as e:
             print(f"文件上传失败: {str(e)}")
             return False
+    def list_file(self, remote_path):
+        """
+        列出WebDAV服务器上指定目录下的所有文件
+        Args:
+            remote_path (str): WebDAV服务器上的目录路径
+        Returns:
+            list: 包含所有文件和目录的列表
+        """
+        try:
+            return self.client.list(remote_path)
+        except Exception as e:
+            print(f"列出文件失败: {str(e)}")
+            return []
     
     def delete_file(self, remote_path):
         """

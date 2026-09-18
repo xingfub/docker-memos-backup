@@ -1,7 +1,7 @@
 #!/bin/bash
 
 IMAGE_NAME="xingfub/memos:0.25.1"
-CONTAINER_NAME="memos-admin-container-stable"
+CONTAINER_NAME="memos"
 
 # 删除镜像，构建镜像
 # sudo docker rmi "$IMAGE_NAME"
